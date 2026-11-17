@@ -122,3 +122,31 @@ h3 { margin: 20px 0 10px; font-size: 18px; }
     gap: 5px;
 }
 .nav-item.active { color: var(--accent); }
+
+
+
+/* Стили для поиска */
+.search-container {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.search-container input {
+    width: 100%;
+    background-color: var(--card-bg);
+    border: 1px solid #2d2d3a;
+    color: var(--text-main);
+    padding: 14px 20px 14px 45px; /* Отступ слева для иконки */
+    border-radius: 12px;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.2s;
+    /* Добавляем иконку лупы через SVG на фоне */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 15px center;
+}
+
+.search-container input:focus {
+    border-color: var(--accent);
+}

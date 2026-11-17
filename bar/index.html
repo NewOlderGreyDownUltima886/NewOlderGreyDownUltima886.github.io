@@ -17,8 +17,20 @@
             <h1>Коктейли</h1>
             <p>ТТК • Рецепты • Фото</p>
         </header>
+        
+        <!-- НОВЫЙ БЛОК ПОИСКА -->
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Поиск по названию..." oninput="app.handleSearch(this.value)">
+        </div>
+
+        <!-- Блок категорий (скроется, когда начнется поиск) -->
         <div class="category-list" id="category-list">
             <!-- Категории подтянутся из JS -->
+        </div>
+
+        <!-- Блок результатов поиска (появится при вводе) -->
+        <div class="drink-grid" id="search-results" style="display: none;">
+            <!-- Результаты поиска подтянутся из JS -->
         </div>
     </div>
 

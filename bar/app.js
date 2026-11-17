@@ -42,7 +42,14 @@ const app = {
     showView(viewId) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
         document.getElementById(`view-${viewId}`).classList.add('active');
-        
+
+        // СБРОС ПОИСКА ПРИ ПЕРЕХОДЕ НА ГЛАВНУЮ
+        if (viewId === 'home') {
+            document.getElementById('search-input').value = '';
+            document.getElementById('category-list').style.display = 'block'; // или flex
+            document.getElementById('search-results').style.display = 'none';
+        }
+
         // Подсветка нижнего меню
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         if(viewId === 'home') document.querySelectorAll('.nav-item')[0].classList.add('active');
@@ -73,6 +80,44 @@ const app = {
             </div>
         `).join('');
     },
+
+
+        // Логика поиска
+    handleSearch(query) {
+        const categoryList = document.getElementById('category-list');
+        const searchResults = document.getElementById('search-results');
+        
+        // Если поле пустое — показываем категории, скрываем результаты
+        if (query.trim() === '') {
+            categoryList.style.display = 'flex'; // или block, зависит от вашего CSS
+            searchResults.style.display = 'none';
+            return;
+        }
+
+        // Если есть текст — скрываем категории, показываем результаты
+        categoryList.style.display = 'none';
+        searchResults.style.display = 'grid';
+
+        // Фильтруем базу данных (ищем по имени, без учета регистра)
+        const lowerQuery = query.toLowerCase();
+        const filteredDrinks = menuData.filter(drink => 
+            drink.name.toLowerCase().includes(lowerQuery)
+        );
+
+        // Отрисовываем результаты
+        if (filteredDrinks.length === 0) {
+            searchResults.innerHTML = '<p style="color: gray; grid-column: span 2; text-align: center; margin-top: 20px;">Ничего не найдено</p>';
+            return;
+        }
+
+        searchResults.innerHTML = filteredDrinks.map(drink => `
+            <div class="drink-card" onclick="app.openDetail('${drink.id}')">
+                <img src="${drink.image}" alt="${drink.name}">
+                <h4>${drink.name}</h4>
+            </div>
+        `).join('');
+    },
+
 
     // Открытие категории
     openCategory(catId, catName) {
