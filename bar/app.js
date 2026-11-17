@@ -114,7 +114,20 @@ const app = {
 
         // Рендер ингредиентов
         const list = document.getElementById('ingredients-list');
-        list.innerHTML = drink.ingredients.map((ing, index) => {
+        
+        // Если есть описание сервировки, выводим его перед ингредиентами
+        let html = '';
+        if (drink.serving && !this.isEditing) {
+            html += `
+                <li style="display: block; border-bottom: none; padding-bottom: 20px;">
+                    <h3 style="margin: 0 0 10px 0; font-size: 16px; color: var(--text-muted);">Метод / Сервировка</h3>
+                    <p style="font-size: 14px; line-height: 1.4;">${drink.serving}</p>
+                </li>
+            `;
+        }
+
+        // Сами ингредиенты
+        html += drink.ingredients.map((ing, index) => {
             if (this.isEditing) {
                 return `
                     <li>
@@ -134,6 +147,8 @@ const app = {
                 `;
             }
         }).join('');
+        
+        list.innerHTML = html;
 
         // Настройка кнопок
         const favBtn = document.getElementById('fav-btn');
