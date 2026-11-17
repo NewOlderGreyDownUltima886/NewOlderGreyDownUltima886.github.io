@@ -25,7 +25,7 @@ const menuData = [
         id: 'b-52',
         category: 'shots',
         name: 'Б-52',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/2/20/Cocktail_B52_Isolated.png',
+        image: 'https://yandex-images.clstorage.net/kLVg98354/de9af6kx/6Q2m4tHWUBL0ZS8psnKvIs4nyM4GKNjXQhhJOfexOm1L94cxtUin8vgkxz7RgNg2H3DVS50C4QC96T5VZBB5EEwpk4bEwuX2hGV-bQLWboIPJpwP0hmM9tJYPKk3F9y6HPWR9sNKINVvQGIOBIX8gsth0818cDHg-x8tQtVjjpcKXPeiwKWhBKWVTC_BMN6C3EVtfmaZfsWl2gkvE2Q_aC2F8uRhK_DUj8HQTCVX7xbogYM8ugKwYCpMbTI1kA0Gio9k4QGE8RTmxP9-EHBfM5wUjY5muD8l5Hn5zgK1T4pt1PM1Ueuy5N8DcK4GZI-nG1OiXAvz0aC6b_yxNWA9Fbg8lCECx_PEllX8j2BxnNDuJO0fdosNB2d72l5jJU1aXFcSJUEJE7V-w2DdR6VuNpowIX3p8XNgus6McRSzn3d5b8RgwTdDNofnjO4A8S2wPma8zHd43Of3yhn9cQbNGu50oScQ-HL2zxMhfJbkDVS6kpEv6NLRY_tun7NXkO61W2wlc4KlkEc2ll2-Y0PusMxl3v6E6J8lhzg6XSKGjhruRRKHseqi9R_i4p-kVq2EuqPyX8lQEnL7Pf6CxYIP9-g89_EQ5cBlhYbM7-OTrWJMBr08lxk-hoUYaC-zht5ZXGbQ5PJaY_WPceNeV9Vfx7gwYkwJ0tDy2zxOoJbh_zX7fDeisQfTxXel_G0BEE0SfWYPvaZJrzXGqagucRRteF5VkCbCGbJ1r8CAXtTX7xZb4-E-6QHhc-sf_2Dks-0VO7-WgLOH0lZUdG6_Y4GNIc5FD0z0Ct2kxNo53qJVPfiMpRFUkngzBl_x0t3XxK2HiDHyDZtjkkPajVxzVKHvRLpN1oFRBWJlJDb874Cz7NGtR96eZwsddYe6W55yp74LTefQ9nB6ImZs0ZA8xGXN57oCQWzKkBLB-e6M8LawD5e7XqRhQkeT5DR3vp9xEY9hjeVcfEdrPnWnGZlMUOU8I',
         method: 'Слои',
         glass: 'Шот (45мл)',
         ingredients: [
@@ -38,7 +38,7 @@ const menuData = [
         id: 'b-53',
         category: 'shots',
         name: 'Б-53',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/B-52_Splash.jpg/800px-B-52_Splash.jpg',
+        image: 'https://kokteil-bar.ru/wp-content/uploads/2019/12/kokteil-b-53-e1575404907241.jpg',
         method: 'Слои',
         glass: 'Шот (45мл)',
         ingredients: [
@@ -51,7 +51,7 @@ const menuData = [
         id: 'fast-dead',
         category: 'shots',
         name: 'Быстрый и мёртвый',
-        image: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=600&auto=format&fit=crop',
+        image: 'https://avatars.mds.yandex.net/i?id=d53e2da3015a3b0e42534cc0ed1fd3ae_l-5336145-images-thumbs&n=13',
         method: 'Слои',
         glass: 'Шот (45мл)',
         ingredients: [
@@ -64,7 +64,7 @@ const menuData = [
         id: 'popcorn',
         category: 'shots',
         name: 'Попкорн',
-        image: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=600&auto=format&fit=crop',
+        image: 'https://avatars.mds.yandex.net/i?id=5c4f99c72427834d474044811196d9a6_l-10414649-images-thumbs&n=13',
         method: 'Шейк (без льда)',
         glass: 'Шот (45мл)',
         ingredients: [
@@ -78,7 +78,7 @@ const menuData = [
         id: 'kis-kis',
         category: 'shots',
         name: 'Кис-кис (2 шт)',
-        image: 'https://images.unsplash.com/photo-1572490122747-3968b75cb699?q=80&w=600&auto=format&fit=crop',
+        image: 'https://i.pinimg.com/originals/98/fa/13/98fa13b082c0544fe0b564636e680e7c.png',
         method: 'Шейк (без льда)',
         glass: 'Шот (45мл+45мл)',
         ingredients: [
@@ -89,38 +89,38 @@ const menuData = [
             { name: 'Сироп ПрофСироп "Малина"', amount: '10', unit: 'мл' }
         ]
     },
-    {
-        id: 'empress',
-        category: 'shots',
-        name: 'Шальная Императрица',
-        image: 'https://images.unsplash.com/photo-1551538827-9c037cb4f32a?q=80&w=600&auto=format&fit=crop',
-        method: 'Билд',
-        glass: 'Шот (45мл)',
-        ingredients: [
-            { name: 'Текила ЛаПавеса', amount: '15', unit: 'мл' },
-            { name: 'СуперДжусс', amount: '15', unit: 'мл' },
-            { name: 'Ликер Трипл Сек Фрукошульц / Гамбини', amount: '15', unit: 'мл' },
-            { name: 'Соль (окаемка)', amount: '2', unit: 'Гр' }
-        ]
-    },
-    {
-        id: 'morning-after',
-        category: 'shots',
-        name: 'Утро после Корпоротива',
-        image: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=600&auto=format&fit=crop',
-        method: 'Билд',
-        glass: 'Шот (45мл)',
-        ingredients: [
-            { name: 'водка «Тундра»', amount: '15', unit: 'мл' },
-            { name: 'Кофейный Ликер Фрукошульц / Гамбини', amount: '15', unit: 'мл' },
-            { name: 'Настойка Ирина Любовь', amount: '15', unit: 'мл' }
-        ]
-    },
+    // {
+    //     id: 'empress',
+    //     category: 'shots',
+    //     name: 'Шальная Императрица',
+    //     image: 'https://images.unsplash.com/photo-1551538827-9c037cb4f32a?q=80&w=600&auto=format&fit=crop',
+    //     method: 'Билд',
+    //     glass: 'Шот (45мл)',
+    //     ingredients: [
+    //         { name: 'Текила ЛаПавеса', amount: '15', unit: 'мл' },
+    //         { name: 'СуперДжусс', amount: '15', unit: 'мл' },
+    //         { name: 'Ликер Трипл Сек Фрукошульц / Гамбини', amount: '15', unit: 'мл' },
+    //         { name: 'Соль (окаемка)', amount: '2', unit: 'Гр' }
+    //     ]
+    // },
+    // {
+    //     id: 'morning-after',
+    //     category: 'shots',
+    //     name: 'Утро после Корпоротива',
+    //     image: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=600&auto=format&fit=crop',
+    //     method: 'Билд',
+    //     glass: 'Шот (45мл)',
+    //     ingredients: [
+    //         { name: 'водка «Тундра»', amount: '15', unit: 'мл' },
+    //         { name: 'Кофейный Ликер Фрукошульц / Гамбини', amount: '15', unit: 'мл' },
+    //         { name: 'Настойка Ирина Любовь', amount: '15', unit: 'мл' }
+    //     ]
+    // },
     {
         id: 'who-are-you',
         category: 'shots',
         name: 'Вы кто такие? Я вас не звал!',
-        image: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=600&auto=format&fit=crop',
+        image: 'https://i.pinimg.com/736x/a5/55/9d/a5559d44953e3f7126d093d46febadcd.jpg',
         method: 'Билд',
         glass: 'Шот (45мл)',
         ingredients: [
