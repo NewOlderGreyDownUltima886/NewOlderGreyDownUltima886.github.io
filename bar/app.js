@@ -7,6 +7,11 @@ const app = {
     isEditing: false,
     history: [],
     
+    // Переменные для свайпа
+    touchStartX: 0,
+    touchStartY: 0,
+    isSwiping: false,
+    
     // Инициализация
     init() {
         this.loadData();
@@ -23,6 +28,60 @@ const app = {
                 if (index !== -1) menuData[index] = savedDrink;
             });
         }
+
+        // Настройка навигации и свайпов
+        this.setupHistory();
+        this.setupSwipe();
+    },
+
+    // Настройка системной кнопки "Назад"
+    setupHistory() {
+        // Добавляем фейковую запись, чтобы кнопка "Назад" на Android не закрывала приложение сразу
+        history.pushState({ page: 'home' }, '');
+        
+        window.addEventListener('popstate', () => {
+            const activeView = document.querySelector('.view.active');
+            if (activeView && activeView.id !== 'view-home') {
+                // Если мы не на главной, кнопка "Назад" возвращает на предыдущий экран
+                this.goBack();
+                // Возвращаем запись в историю
+                history.pushState({ page: 'home' }, ''); 
+            }
+        });
+    },
+
+    // Настройка свайпа от левого края (для карточки)
+    setupSwipe() {
+        const detailView = document.getElementById('view-detail');
+        if (!detailView) return;
+        
+        detailView.addEventListener('touchstart', (e) => {
+            // Срабатывает только если палец коснулся левых 50 пикселей экрана
+            if (e.touches[0].clientX < 50) {
+                this.touchStartX = e.touches[0].clientX;
+                this.touchStartY = e.touches[0].clientY;
+                this.isSwiping = true;
+            }
+        }, { passive: true });
+
+        detailView.addEventListener('touchmove', (e) => {
+            if (!this.isSwiping) return;
+            const currentX = e.touches[0].clientX;
+            const currentY = e.touches[0].clientY;
+            
+            const diffX = currentX - this.touchStartX;
+            const diffY = Math.abs(currentY - this.touchStartY);
+
+            // Проверяем, что свайп вправо и больше 80px, а вертикальное отклонение маленькое
+            if (diffX > 80 && diffY < 50) {
+                this.isSwiping = false;
+                this.goBack(true); // Передаем true для анимации
+            }
+        }, { passive: true });
+
+        detailView.addEventListener('touchend', () => {
+            this.isSwiping = false;
+        });
     },
 
     loadData() {
@@ -45,10 +104,14 @@ const app = {
 
         // СБРОС ПОИСКА ПРИ ПЕРЕХОДЕ НА ГЛАВНУЮ
         if (viewId === 'home') {
-            document.getElementById('search-input').value = '';
-            // ВАЖНО: возвращаем flex, а не block, чтобы сохранить отступы между плитками
-            document.getElementById('category-list').style.display = 'flex'; 
-            document.getElementById('search-results').style.display = 'none';
+            const searchInput = document.getElementById('search-input');
+            if (searchInput) searchInput.value = '';
+            
+            const categoryList = document.getElementById('category-list');
+            if (categoryList) categoryList.style.display = 'flex'; 
+            
+            const searchResults = document.getElementById('search-results');
+            if (searchResults) searchResults.style.display = 'none';
         }
 
         // Подсветка нижнего меню
@@ -59,18 +122,33 @@ const app = {
         window.scrollTo(0, 0);
     },
 
-    goBack() {
-        if (this.history.length > 0) {
-            const prevView = this.history.pop();
-            this.showView(prevView);
+    // Обновленный метод возврата с анимацией
+    goBack(animate = false) {
+        const activeView = document.querySelector('.view.active');
+        
+        if (animate && activeView) {
+            activeView.classList.add('swipe-out');
+            setTimeout(() => {
+                activeView.classList.remove('swipe-out');
+                if (this.history.length > 0) {
+                    this.showView(this.history.pop());
+                } else {
+                    this.showView('home');
+                }
+            }, 300);
         } else {
-            this.showView('home');
+            if (this.history.length > 0) {
+                this.showView(this.history.pop());
+            } else {
+                this.showView('home');
+            }
         }
     },
 
     // Рендер Главной
     renderCategories() {
         const container = document.getElementById('category-list');
+        if (!container) return;
         container.innerHTML = categories.map(cat => `
             <div class="category-card" onclick="app.openCategory('${cat.id}', '${cat.name}')">
                 <div>
@@ -82,30 +160,26 @@ const app = {
         `).join('');
     },
 
-
-        // Логика поиска
+    // Логика поиска
     handleSearch(query) {
         const categoryList = document.getElementById('category-list');
         const searchResults = document.getElementById('search-results');
+        if (!categoryList || !searchResults) return;
         
-        // Если поле пустое — показываем категории, скрываем результаты
         if (query.trim() === '') {
             categoryList.style.display = 'flex'; 
             searchResults.style.display = 'none';
             return;
         }
 
-        // Если есть текст — скрываем категории, показываем результаты
         categoryList.style.display = 'none';
         searchResults.style.display = 'grid';
 
-        // Фильтруем базу данных (ищем по имени, без учета регистра)
         const lowerQuery = query.toLowerCase();
         const filteredDrinks = menuData.filter(drink => 
             drink.name.toLowerCase().includes(lowerQuery)
         );
 
-        // Отрисовываем результаты
         if (filteredDrinks.length === 0) {
             searchResults.innerHTML = '<p style="color: gray; grid-column: span 2; text-align: center; margin-top: 20px;">Ничего не найдено</p>';
             return;
@@ -118,7 +192,6 @@ const app = {
             </div>
         `).join('');
     },
-
 
     // Открытие категории
     openCategory(catId, catName) {
@@ -161,7 +234,6 @@ const app = {
         // Рендер ингредиентов
         const list = document.getElementById('ingredients-list');
         
-        // Если есть описание сервировки, выводим его перед ингредиентами
         let html = '';
         if (drink.serving && !this.isEditing) {
             html += `
@@ -172,7 +244,6 @@ const app = {
             `;
         }
 
-        // Сами ингредиенты
         html += drink.ingredients.map((ing, index) => {
             if (this.isEditing) {
                 return `
@@ -222,6 +293,8 @@ const app = {
 
     renderFavorites() {
         const grid = document.getElementById('favorites-grid');
+        if (!grid) return;
+        
         const favDrinks = menuData.filter(d => this.favorites.includes(d.id));
         
         if (favDrinks.length === 0) {
@@ -240,11 +313,9 @@ const app = {
     // Редактирование
     toggleEdit() {
         if (this.isEditing) {
-            // Сохраняем
             this.saveMenuData();
             this.isEditing = false;
         } else {
-            // Включаем режим редактирования
             this.isEditing = true;
         }
         this.renderDetail();
@@ -263,7 +334,7 @@ const app = {
         const reader = new FileReader();
         reader.onload = (e) => {
             const drink = menuData.find(d => d.id === this.currentDrinkId);
-            drink.image = e.target.result; // Ссылка Base64
+            drink.image = e.target.result; 
             this.renderDetail();
         };
         reader.readAsDataURL(file);
