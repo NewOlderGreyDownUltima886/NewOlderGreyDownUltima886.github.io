@@ -46,7 +46,8 @@ const app = {
         // СБРОС ПОИСКА ПРИ ПЕРЕХОДЕ НА ГЛАВНУЮ
         if (viewId === 'home') {
             document.getElementById('search-input').value = '';
-            document.getElementById('category-list').style.display = 'block'; // или flex
+            // ВАЖНО: возвращаем flex, а не block, чтобы сохранить отступы между плитками
+            document.getElementById('category-list').style.display = 'flex'; 
             document.getElementById('search-results').style.display = 'none';
         }
 
@@ -89,7 +90,7 @@ const app = {
         
         // Если поле пустое — показываем категории, скрываем результаты
         if (query.trim() === '') {
-            categoryList.style.display = 'flex'; // или block, зависит от вашего CSS
+            categoryList.style.display = 'flex'; 
             searchResults.style.display = 'none';
             return;
         }
