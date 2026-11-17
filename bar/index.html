@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0f0f13">
+    <title>ТТК Бармена</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="icons/icon-192.png">
+</head>
+<body>
+
+    <!-- Экран 1: Главная -->
+    <div id="view-home" class="view active">
+        <header>
+            <h1>Коктейли</h1>
+            <p>ТТК • Рецепты • Фото</p>
+        </header>
+        <div class="category-list" id="category-list">
+            <!-- Категории подтянутся из JS -->
+        </div>
+    </div>
+
+    <!-- Экран 2: Список напитков в категории -->
+    <div id="view-category" class="view">
+        <header class="nav-header">
+            <button class="back-btn" onclick="app.showView('home')">←</button>
+            <h2 id="category-title">Категория</h2>
+        </header>
+        <div class="drink-grid" id="drink-grid">
+            <!-- Карточки напитков подтянутся из JS -->
+        </div>
+    </div>
+
+    <!-- Экран 3: Детали напитка -->
+    <div id="view-detail" class="view">
+        <div class="detail-hero">
+            <img id="detail-image" src="" alt="Напиток">
+            <button class="back-btn floating" onclick="app.goBack()">←</button>
+            
+            <!-- Кнопка загрузки фото (для режима редактирования) -->
+            <label id="upload-label" class="upload-btn hidden">
+                📷 Сменить фото
+                <input type="file" id="image-upload" accept="image/*" onchange="app.handleImageUpload(event)">
+            </label>
+        </div>
+        
+        <div class="detail-content">
+            <div class="detail-header">
+                <h2 id="detail-name">Название</h2>
+                <button id="edit-btn" onclick="app.toggleEdit()">✏️</button>
+            </div>
+            
+            <div class="tags">
+                <span class="tag" id="detail-glass">Шот</span>
+                <span class="tag" id="detail-method">Метод</span>
+            </div>
+
+            <h3>Состав</h3>
+            <ul class="ingredients-list" id="ingredients-list">
+                <!-- Ингредиенты подтянутся из JS -->
+            </ul>
+
+            <button id="fav-btn" class="main-btn" onclick="app.toggleFavorite()">
+                ♡ Сохранить в избранное
+            </button>
+        </div>
+    </div>
+
+    <!-- Экран 4: Избранное -->
+    <div id="view-favorites" class="view">
+        <header>
+            <h1>Избранное</h1>
+        </header>
+        <div class="drink-grid" id="favorites-grid">
+            <!-- Избранные напитки подтянутся из JS -->
+        </div>
+    </div>
+
+    <!-- Нижнее меню (Навигация) -->
+    <nav class="bottom-nav">
+        <button onclick="app.showView('home')" class="nav-item active">🏠<br>Главная</button>
+        <button onclick="app.showView('favorites')" class="nav-item">⭐<br>Избранное</button>
+    </nav>
+
+    <script src="app.js"></script>
+</body>
+</html>
