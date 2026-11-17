@@ -1,2 +1,112 @@
-<a href="https://newoldergreydownultima886.github.io/akush1">AKUSH 1</a>
-<a href="https://newoldergreydownultima886.github.io/bar">BAR</a>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Выбор приложения</title>
+    <style>
+        /* Сброс стилей */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            /* Темный фон, как в вашем ТТК */
+            background-color: #0f0f13; 
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            
+            /* Делаем контейнер на весь экран (с учетом мобильных браузеров) */
+            height: 100vh;
+            height: 100dvh; /* Динамическая высота для мобильных */
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* Расстояние между карточками */
+            padding: 20px; /* Отступы от краев экрана */
+        }
+
+        /* Общие стили для карточек */
+        .card {
+            flex: 1; /* Карточки занимают поровну всё доступное место */
+            background-color: #1c1c24; /* Цвет карточек из ТТК */
+            border-radius: 24px; /* Красивое скругление */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            color: #ffffff;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Эффект нажатия на телефоне */
+        .card:active {
+            transform: scale(0.98);
+            background-color: #252530;
+        }
+
+        /* Заголовки внутри карточек */
+        .card h2 {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            z-index: 2;
+        }
+
+        /* Подзаголовок (мелкий текст) */
+        .card p {
+            font-size: 14px;
+            color: #9ca3af; /* Серый цвет */
+            z-index: 2;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Фиолетовая полоска-акцент сверху карточки */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #7c3aed; /* Фиолетовый акцент */
+            opacity: 0.8;
+        }
+
+        /* Красивое свечение на фоне (опционально) */
+        .card .glow {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background: #7c3aed;
+            filter: blur(80px);
+            opacity: 0.3;
+            border-radius: 50%;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Верхняя карточка -->
+    <a href="https://newoldergreydownultima886.github.io/akush1" class="card">
+        <div class="glow"></div>
+        <h2>AKUSH 1</h2>
+        <p>Акушерство</p>
+    </a>
+
+    <!-- Нижняя карточка -->
+    <a href="https://newoldergreydownultima886.github.io/bar" class="card">
+        <div class="glow"></div>
+        <h2>BAR</h2>
+        <p>Барное дело</p>
+    </a>
+
+</body>
+</html>

@@ -20,7 +20,17 @@
         
         <!-- НОВЫЙ БЛОК ПОИСКА -->
         <div class="search-container">
-            <input type="text" id="search-input" placeholder="Поиск по названию..." oninput="app.handleSearch(this.value)">
+            <input 
+                type="text" 
+                id="search-input" 
+                placeholder="Поиск по названию..." 
+                oninput="app.handleSearch(this.value)"
+                autocomplete="off" 
+                autocorrect="off" 
+                autocapitalize="off" 
+                spellcheck="false"
+                name="cocktail_search"
+            >
         </div>
 
         <!-- Блок категорий (скроется, когда начнется поиск) -->
