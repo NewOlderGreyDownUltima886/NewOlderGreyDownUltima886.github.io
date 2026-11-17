@@ -304,7 +304,7 @@ const menuData = [
         id: 'gost-cosmopolitan',
         category: 'gost',
         name: 'Космополитен',
-        image: 'https://uk.inshaker.com/uploads/cocktail/promo/29/wide_1629716851-%D0%9A%D0%BE%D1%81%D0%BC%D0%BE%D0%BF%D0%BE%D0%BB%D0%B8%D1%82%D0%B5%D0%BD.jpg',
+        image: 'https://i.pinimg.com/736x/b7/fd/7e/b7fd7e2378751b32eb35022778eb0818.jpg',
         method: 'Хард Шейк, Стрейн',
         glass: 'Шале',
         ice: '',
