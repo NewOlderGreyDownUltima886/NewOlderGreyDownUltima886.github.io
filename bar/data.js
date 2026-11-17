@@ -237,7 +237,7 @@ const menuData = [
         id: 'milkshake-strawberry',
         category: 'milkshakes',
         name: 'Милкшейк Клубничный',
-        image: 'https://glutenfreegoddessrecipes.com/wp-content/uploads/2025/04/strawberry-shake-recipe-1745397645.jpg',
+        image: 'https://i.pinimg.com/originals/43/c8/16/43c816270b374afc7db9dd3a2f21f865.png?nii=t',
         method: 'Блендер',
         glass: 'Айриш бокал',
         ingredients: [
@@ -254,7 +254,7 @@ const menuData = [
         id: 'milkshake-oreo',
         category: 'milkshakes',
         name: 'Милкшейк Орео',
-        image: 'https://iambaker.net/wp-content/uploads/2024/06/Oreo-Milkshake--1158x1536.jpg',
+        image: 'https://i.pinimg.com/736x/dd/a6/1f/dda61f7480d13acfe8e7c7be20789f51.jpg',
         method: 'Блендер',
         glass: 'Айриш бокал',
         ingredients: [
