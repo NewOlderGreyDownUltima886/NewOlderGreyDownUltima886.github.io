@@ -150,3 +150,13 @@ h3 { margin: 20px 0 10px; font-size: 18px; }
 .search-container input:focus {
     border-color: var(--accent);
 }
+
+/* Анимация для свайпа назад */
+.view.swipe-out {
+    animation: swipeOut 0.3s ease-in forwards;
+}
+
+@keyframes swipeOut {
+    0% { transform: translateX(0); opacity: 1; }
+    100% { transform: translateX(100%); opacity: 0; }
+}
