@@ -1,8 +1,9 @@
 {
-  "name": "TTK",
-  "short_name": "TTK",
-  "description": "Пет проекты",
-  "start_url": "/",
+  "name": "Бар ТТК",
+  "short_name": "Бар",
+  "description": "Технологические карты бара",
+  "start_url": "/bar/", 
+  "id": "/bar/",
   "display": "standalone",
   "background_color": "#0f0f13",
   "theme_color": "#0f0f13",

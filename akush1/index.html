@@ -9,3 +9,10 @@
 <section id="reference" class="page"><label>ВСЁ В ОДНОМ МЕСТЕ</label><h2>Справочник</h2><input id="search" placeholder="⌕  Поиск по терминам и значениям"><div id="refs"></div></section>
 <section id="progress" class="page"><label>ТВОЙ РЕЗУЛЬТАТ</label><h2>Прогресс</h2><div class="progressbox"><b id="percent">0%</b><span id="progressText">Начни с любой темы.</span></div><div id="breakdown"></div><button id="reset" class="plain">Сбросить прогресс</button></section>
 </main><footer>АКУШЕРСТВО · РАБОТАЕТ ОФЛАЙН ПОСЛЕ ПЕРВОЙ ЗАГРУЗКИ</footer><div id="toast"></div><script src="app.js"></script></body></html>
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js', { scope: './' });
+        });
+    }
+</script>

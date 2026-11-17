@@ -110,4 +110,15 @@
     <script src="data.js"></script>
     <script src="app.js"></script>
 </body>
+
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            // Регистрируем SW относительно текущей папки (./)
+            navigator.serviceWorker.register('./sw.js', { scope: './' });
+        });
+    }
+</script>
+
+
 </html>

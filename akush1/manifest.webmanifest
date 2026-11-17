@@ -1,0 +1,22 @@
+{
+  "name": "Акушерство 1",
+  "short_name": "Акушерство",
+  "description": "Учебные материалы Акушерство 1",
+  "start_url": "/akush1/",
+  "id": "/akush1/",
+  "display": "standalone",
+  "background_color": "#0f0f13",
+  "theme_color": "#0f0f13",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
