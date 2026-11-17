@@ -1,6 +1,7 @@
 {
-  "name": "Стафф",
-  "short_name": "Стафф",
+  "name": "TTK",
+  "short_name": "TTK",
+  "description": "Пет проекты",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0f0f13",
