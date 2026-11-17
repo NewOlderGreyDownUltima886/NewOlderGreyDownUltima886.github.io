@@ -6,8 +6,8 @@ const ASSETS = [
     './style.css',
     './app.js',
     './data.js',
-    'icons/icon-192.png',
-    'icons/icon-512.png'
+    './icons/icon-192.png',
+    './icons/icon-512.png'
 ];
 
 self.addEventListener('install', (e) => {
