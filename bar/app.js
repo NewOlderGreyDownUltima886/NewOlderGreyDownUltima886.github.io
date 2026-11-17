@@ -1,39 +1,5 @@
 // 1. Данные из вашего документа (можно дополнять)
-const menuData = [
-    {
-        id: 'b-52',
-        category: 'shots',
-        name: 'Б-52',
-        image: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=600&auto=format&fit=crop', // Временная картинка
-        method: 'Слои',
-        glass: 'Шот (45мл)',
-        ingredients: [
-            { name: 'Кофейный Ликер Фрукошульц/Гамбини', amount: '15', unit: 'мл' },
-            { name: 'Сливочный ликер Царский/Ирина Любовь', amount: '15', unit: 'мл' },
-            { name: 'Ликер Трипл Сек Фрукошульц/Гамбини', amount: '15', unit: 'мл' }
-        ]
-    },
-    {
-        id: 'popkorn',
-        category: 'shots',
-        name: 'Попкорн',
-        image: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=600&auto=format&fit=crop',
-        method: 'Шейк (без льда)',
-        glass: 'Шот (45мл)',
-        ingredients: [
-            { name: 'СуперДжусс', amount: '15', unit: 'мл' },
-            { name: 'Водка Коктейльная Беленькая/Кедровица', amount: '15', unit: 'мл' },
-            { name: 'Вода Фильтрованная', amount: '5', unit: 'мл' },
-            { name: 'Сироп ПрофСироп "Попкорн"', amount: '10', unit: 'мл' }
-        ]
-    },
-    // Добавьте сюда остальные шоты и чаи...
-];
-
-const categories = [
-    { id: 'shots', name: 'Шоты забористые', desc: 'Крепкие и яркие' },
-    { id: 'tea', name: 'Чай', desc: 'Согревающие' }
-];
+// удалил и вынес в отдельный data.js
 
 // 2. Состояние приложения
 const app = {
