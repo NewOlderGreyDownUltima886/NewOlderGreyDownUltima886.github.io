@@ -1,22 +1,15 @@
-// 1. Данные из вашего документа (можно дополнять)
-// удалил и вынес в отдельный data.js
-
-// 2. Состояние приложения
 const app = {
     currentDrinkId: null,
     isEditing: false,
     history: [],
     
-    // Инициализация
     init() {
         this.loadData();
         this.renderCategories();
         this.renderFavorites();
         
-        // Восстановление данных из LocalStorage (если редактировали ранее)
         const savedData = localStorage.getItem('ttk_menu_data');
         if (savedData) {
-            // Заменяем дефолтные данные на отредактированные
             const parsed = JSON.parse(savedData);
             parsed.forEach(savedDrink => {
                 const index = menuData.findIndex(d => d.id === savedDrink.id);
@@ -24,33 +17,32 @@ const app = {
             });
         }
 
-        // Настройка навигации и свайпов
         this.setupHistory();
         this.setupSwipe();
+        
+        // Отладка старта
+        setTimeout(() => alert("1. ПРИЛОЖЕНИЕ ЗАГРУЖЕНО\nИстория браузера: " + history.length), 500);
     },
 
-    // Настройка системной кнопки "Назад" (Android)
     setupHistory() {
-        // Добавляем фейковую запись, чтобы перехватить самый первый клик
         history.pushState({ page: 'home' }, '');
         
         window.addEventListener('popstate', () => {
             const activeView = document.querySelector('.view.active');
+            const viewName = activeView ? activeView.id : 'НЕТ';
             
-            // Если мы НЕ на главной странице
+            // Отладка нажатия кнопки
+            alert("2. НАЖАТА СИСТЕМНАЯ КНОПКА НАЗАД\nТекущий экран: " + viewName + "\nНаш массив history: [" + this.history.join(', ') + "]");
+            
             if (activeView && activeView.id !== 'view-home') {
-                // Запускаем анимацию и возврат
                 this.goBack(true);
-                
-                // СРАЗУ возвращаем запись в историю браузера, 
-                // чтобы приложение не закрылось и могло перехватить следующее нажатие
                 history.pushState({ page: 'home' }, ''); 
+            } else {
+                alert("Мы на главной! Приложение сейчас закроется.");
             }
-            // Если мы на главной - ничего не делаем, позволяем системе обработать выход
         });
     },
 
-    // Настройка свайпа (в обе стороны: влево и вправо)
     setupSwipe() {
         let startX = 0;
         let startY = 0;
@@ -58,7 +50,6 @@ const app = {
 
         document.addEventListener('touchstart', (e) => {
             const activeView = document.querySelector('.view.active');
-            // Не свайпаем на главной странице
             if (!activeView || activeView.id === 'view-home') return;
 
             startX = e.touches[0].clientX;
@@ -75,17 +66,10 @@ const app = {
             const diffX = currentX - startX;
             const diffY = Math.abs(currentY - startY);
 
-            // Проверяем вертикальное отклонение (чтобы не мешать скроллу)
             if (diffY < 50) {
-                // Свайп вправо (больше 80px)
-                if (diffX > 80) {
+                if (diffX > 80 || diffX < -80) {
                     isSwiping = false;
-                    this.goBack(true);
-                }
-                // Свайп влево (меньше -80px)
-                else if (diffX < -80) {
-                    isSwiping = false;
-                    this.goBack(true);
+                    this.goBack(true); 
                 }
             }
         }, { passive: true });
@@ -108,12 +92,10 @@ const app = {
         localStorage.setItem('ttk_menu_data', JSON.stringify(menuData));
     },
 
-    // Навигация
     showView(viewId) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
         document.getElementById(`view-${viewId}`).classList.add('active');
 
-        // СБРОС ПОИСКА ПРИ ПЕРЕХОДЕ НА ГЛАВНУЮ
         if (viewId === 'home') {
             const searchInput = document.getElementById('search-input');
             if (searchInput) searchInput.value = '';
@@ -125,7 +107,6 @@ const app = {
             if (searchResults) searchResults.style.display = 'none';
         }
 
-        // Подсветка нижнего меню
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         if(viewId === 'home') document.querySelectorAll('.nav-item')[0].classList.add('active');
         if(viewId === 'favorites') document.querySelectorAll('.nav-item')[1].classList.add('active');
@@ -133,27 +114,25 @@ const app = {
         window.scrollTo(0, 0);
     },
 
-    // Возврат назад (используется для свайпов, кнопок и системной кнопки)
     goBack(animate = false) {
         const activeView = document.querySelector('.view.active');
         
         if (animate && activeView) {
-            // Сразу вычисляем, куда переходить, чтобы история не запуталась
             let nextViewId = 'home';
             if (this.history.length > 0) {
                 nextViewId = this.history.pop();
             }
 
-            // Запускаем анимацию уезда
+            // Отладка перехода
+            alert("3. ЗАПУСК goBack(animate=true)\nУходим с: " + (activeView ? activeView.id : 'НЕТ') + "\nПереходим на: " + nextViewId + "\nОстаток history: [" + this.history.join(', ') + "]");
+
             activeView.classList.add('swipe-out');
             
-            // Ждем окончания анимации (200мс)
             setTimeout(() => {
                 activeView.classList.remove('swipe-out');
                 this.showView(nextViewId);
             }, 200);
         } else {
-            // Обычный возврат без анимации
             if (this.history.length > 0) {
                 this.showView(this.history.pop());
             } else {
@@ -162,7 +141,6 @@ const app = {
         }
     },
 
-    // Рендер Главной
     renderCategories() {
         const container = document.getElementById('category-list');
         if (!container) return;
@@ -177,7 +155,6 @@ const app = {
         `).join('');
     },
 
-    // Логика поиска
     handleSearch(query) {
         const categoryList = document.getElementById('category-list');
         const searchResults = document.getElementById('search-results');
@@ -210,7 +187,6 @@ const app = {
         `).join('');
     },
 
-    // Открытие категории
     openCategory(catId, catName) {
         document.getElementById('category-title').textContent = catName;
         const drinks = menuData.filter(d => d.category === catId);
@@ -227,7 +203,6 @@ const app = {
         this.showView('category');
     },
 
-    // Открытие карточки напитка
     openDetail(id) {
         this.currentDrinkId = id;
         this.isEditing = false;
@@ -292,7 +267,6 @@ const app = {
         document.getElementById('upload-label').classList.toggle('hidden', !this.isEditing);
     },
 
-    // Избранное
     toggleFavorite() {
         const index = this.favorites.indexOf(this.currentDrinkId);
         if (index === -1) {
@@ -323,7 +297,6 @@ const app = {
         `).join('');
     },
 
-    // Редактирование
     toggleEdit() {
         if (this.isEditing) {
             this.saveMenuData();
@@ -339,7 +312,6 @@ const app = {
         drink.ingredients[index][field] = value;
     },
 
-    // Загрузка фото (Base64)
     handleImageUpload(event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -354,5 +326,4 @@ const app = {
     }
 };
 
-// Запуск
 window.onload = () => app.init();
