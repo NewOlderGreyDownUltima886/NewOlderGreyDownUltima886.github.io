@@ -1,31 +1,290 @@
-const DATA=[["pelvis", "Вход", "Границы плоскости входа?", "Спереди — верхний край лонного сочленения; сзади — крестцовый мыс; с боков — безымянные (дугообразные) линии."], ["pelvis", "Вход", "Прямой размер входа (истинная конъюгата)?", "11 см."], ["pelvis", "Вход", "Поперечный размер входа?", "13–13,5 см."], ["pelvis", "Вход", "Косые размеры входа?", "12–12,5 см; от крестцово-подвздошного сочленения одной стороны до подвздошно-лонного возвышения другой."], ["pelvis", "Широкая часть", "Границы широкой части полости малого таза?", "Спереди — середина внутренней поверхности лона; сзади — сочленение между 2-м и 3-м крестцовыми позвонками; с боков — внутренние поверхности вертлужных впадин."], ["pelvis", "Широкая часть", "Размеры широкой части?", "Прямой — 12,5 см; поперечный — 12,5 см."], ["pelvis", "Узкая часть", "Границы узкой части полости малого таза?", "Спереди — нижний край лонного сочленения; сзади — крестцово-копчиковое сочленение; с боков — седалищные ости."], ["pelvis", "Узкая часть", "Размеры узкой части?", "Прямой — 11–11,5 см; поперечный — 10,5 см."], ["pelvis", "Выход", "Границы плоскости выхода?", "Спереди — нижний край лона; сзади — верхушка копчика; с боков — седалищные бугры."], ["pelvis", "Выход", "Прямой размер выхода?", "9,5 см; при отхождении копчика в родах увеличивается на 1,5–2 см и достигает 11–11,5 см."], ["pelvis", "Выход", "Поперечный размер выхода?", "11,5 см."], ["external", "Наружные размеры", "Distantia spinarum — ориентиры и норма?", "Между передневерхними остями подвздошных костей. 25–26 см."], ["external", "Наружные размеры", "Distantia cristarum — ориентиры и норма?", "Между наиболее отдаленными точками гребней подвздошных костей. 28–29 см."], ["external", "Наружные размеры", "Distantia trochanterica — ориентиры и норма?", "Между большими вертелами бедренных костей. 30–31 см."], ["external", "Наружные размеры", "Conjugata externa — ориентиры и норма?", "От надкрестцовой ямки (верхний угол ромба Михаэлиса) до верхнего края лонного симфиза. 20–21 см."], ["anatomy", "Роднички", "Малый родничок: форма и расположение?", "Треугольный; между затылочной и теменными костями."], ["anatomy", "Роднички", "Большой родничок: форма и расположение?", "Ромбовидный; между лобными и теменными костями."], ["anatomy", "Швы", "Где расположен ламбдовидный шов?", "Между затылочной и теменными костями."], ["anatomy", "Швы", "Где расположен стреловидный / сагиттальный шов?", "Между двумя теменными костями."], ["anatomy", "Швы", "Где расположен венечный шов?", "Между лобными и теменными костями."], ["anatomy", "Ориентация", "Первая позиция плода — это…", "Спинка плода обращена влево."], ["anatomy", "Ориентация", "Вторая позиция плода — это…", "Спинка плода обращена вправо."], ["anatomy", "Ориентация", "Передний и задний вид — это…", "Передний — спинка кпереди; задний — спинка кзади."], ["fetus", "Продольные размеры", "Малый косой размер: ориентиры и показатели?", "От подзатылочной ямки до переднего края большого родничка. 9,5 см / 32 см."], ["fetus", "Продольные размеры", "Средний косой размер: ориентиры и показатели?", "От подзатылочной ямки до границы волосистой части лба. 10 см / 33 см."], ["fetus", "Продольные размеры", "Прямой размер: ориентиры и показатели?", "От надпереносья до наиболее выступающей точки затылочного бугра. 12 см / 34–35 см."], ["fetus", "Продольные размеры", "Большой косой размер: ориентиры и показатели?", "От подбородка до макушки (наиболее отдаленной точки затылка). 13,5 см / 38–42 см."], ["fetus", "Продольные размеры", "Вертикальный (отвесный) размер: ориентиры и показатели?", "От подъязычной кости до середины большого родничка. 9,5 см / 32 см."], ["fetus", "Поперечные размеры", "Малый поперечный размер: ориентиры и показатель?", "Между наиболее отдаленными точками венечного шва. Диаметр 8 см."], ["fetus", "Поперечные размеры", "Большой поперечный размер: ориентиры и показатель?", "Между наиболее отдаленными точками теменных бугров. Диаметр 9,25–9,5 см."], ["fetus", "Туловище", "Поперечный размер плечиков (Distantia biacromialis)?", "12–12,5 см / окружность 35 см."], ["fetus", "Туловище", "Поперечный размер ягодиц (Distantia biiliacus)?", "9–9,5 см / окружность 27–28 см."]],QB=[["Прямой размер входа в малый таз?", "11 см", ["9,5 см", "11 см", "12,5 см", "13,5 см"]], ["Поперечный размер выхода?", "11,5 см", ["10,5 см", "11 см", "11,5 см", "13 см"]], ["Норма Distantia spinarum?", "25–26 см", ["20–21 см", "25–26 см", "28–29 см", "30–31 см"]], ["Малый родничок расположен…", "Между затылочной и теменными костями", ["Между лобными и теменными", "Между двумя теменными", "Между затылочной и теменными костями"]], ["Диаметр малого поперечного размера головки?", "8 см", ["8 см", "9,5 см", "10 см", "12 см"]], ["Окружность при малом косом размере?", "32 см", ["27–28 см", "32 см", "34–35 см", "38–42 см"]], ["Прямой размер широкой части?", "12,5 см", ["10,5 см", "11 см", "12,5 см", "13,5 см"]], ["Стреловидный шов расположен…", "Между двумя теменными костями", ["Между затылочной и теменными", "Между двумя теменными костями", "Между лобными и теменными"]], ["Норма наружной конъюгаты?", "20–21 см", ["20–21 см", "25–26 см", "28–29 см", "30–31 см"]], ["Окружность ягодиц плода?", "27–28 см", ["32 см", "35 см", "27–28 см", "38–42 см"]], ["Диаметр большого косого размера головки?", "13,5 см", ["9,5 см", "10 см", "12 см", "13,5 см"]], ["Какой размер выхода увеличивается при отхождении копчика?", "Прямой", ["Поперечный", "Прямой", "Оба одинаково"]], ["Норма Distantia cristarum?", "28–29 см", ["25–26 см", "28–29 см", "30–31 см", "20–21 см"]], ["Вторая позиция: спинка плода обращена…", "Вправо", ["Влево", "Вправо", "Кпереди", "Кзади"]], ["Окружность плечиков?", "35 см", ["27–28 см", "32 см", "35 см", "38–42 см"]]],N={pelvis:"Малый таз",external:"Наружные размеры",anatomy:"Анатомия",fetus:"Размеры плода"};
-let S=JSON.parse(localStorage.getItem("obstetricsPWA")||'{"known":[],"review":[],"right":0,"total":0}'),deck=[],idx=0,flipped=false,filter="all",qi=[],qidx=0,score=0,locked=false;
-const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
-function save(){localStorage.setItem("obstetricsPWA",JSON.stringify(S));stats()}
-function stats(){$("#learned").textContent=S.known.length;$("#reviewCount").textContent=S.review.length;$("#accuracy").textContent=S.total?Math.round(S.right/S.total*100)+"%":"—"}
-function toast(t){let x=$("#toast");x.textContent=t;x.classList.add("show");setTimeout(()=>x.classList.remove("show"),1600)}
-function page(p){$$(".page").forEach(x=>x.classList.toggle("active",x.id===p));$$("[data-tab]").forEach(x=>x.classList.toggle("active",x.dataset.tab===p));if(p==="progress")progress();if(p==="reference")refs($("#search").value);window.scrollTo(0,0)}
-$$("[data-tab]").forEach(b=>b.onclick=()=>page(b.dataset.tab));
-$$("[data-page]").forEach(b=>b.onclick=()=>page(b.dataset.page));
-$$("[data-open]").forEach(b=>b.onclick=()=>{page("cards");build(b.dataset.filter)});
-function build(f="all"){filter=f;deck=DATA.map((x,i)=>({...x,id:i})).filter(x=>f==="all"||(f==="review"?S.review.includes(x.id):x[0]===f));idx=0;flipped=false;$$("[data-filter]").forEach(b=>b.classList.toggle("sel",b.dataset.filter===f));draw()}
-function draw(){let c=deck[idx];if(!c){$("#cat").textContent="НЕТ КАРТОЧЕК";$("#counter").textContent="0 / 0";$("#content").textContent="В этом разделе пока нет карточек.";return}$("#cat").textContent=N[c[0]]+" · "+c[1];$("#counter").textContent=(idx+1)+" / "+deck.length;$("#side").textContent=flipped?"ОТВЕТ":"ВОПРОС";$("#content").textContent=flipped?c[3]:c[2];$("#flip").textContent=flipped?"Показать вопрос":"Показать ответ";$("#cardbar").style.width=((idx+1)/deck.length*100)+"%"}
-function flip(){if(deck.length){flipped=!flipped;draw()}}
-function move(n){if(deck.length){idx=(idx+n+deck.length)%deck.length;flipped=false;draw()}}
-$("#card").onclick=flip;$("#flip").onclick=flip;$("#prev").onclick=()=>move(-1);$("#next").onclick=()=>move(1);
-$("#known").onclick=()=>mark(true);$("#again").onclick=()=>mark(false);
-function mark(k){let c=deck[idx];if(!c)return;S.known=S.known.filter(x=>x!==c.id);S.review=S.review.filter(x=>x!==c.id);(k?S.known:S.review).push(c.id);save();toast(k?"Отмечено: знаю":"Добавлено на повторение");move(1)}
-$("#filters").onclick=e=>{let b=e.target.closest("[data-filter]");if(b)build(b.dataset.filter)};
-$("#shuffle").onclick=()=>{deck.sort(()=>Math.random()-.5);idx=0;flipped=false;draw();toast("Карточки перемешаны")};
-function refs(q=""){let groups={};DATA.forEach(c=>{if(c.join(" ").toLowerCase().includes(q.toLowerCase()))(groups[c[0]]??=[]).push(c)});$("#refs").innerHTML=Object.entries(groups).map(([k,v])=>`<div class="refgroup"><h3>${N[k]}</h3>${v.map(c=>`<article class="refitem"><b>${c[2]}</b><p>${c[3]}</p></article>`).join("")}</div>`).join("")||"<p>Ничего не найдено.</p>"}
-$("#search").oninput=e=>refs(e.target.value);
-function startQuiz(){qi=[...QB].sort(()=>Math.random()-.5).slice(0,10);qidx=0;score=0;locked=false;showQ()}
-function showQ(){let q=qi[qidx];$("#feedback").textContent="";$("#qnext").disabled=true;if(!q){$("#question").textContent="Тест завершён!";$("#answers").innerHTML="";$("#qmeta").textContent="Результат";$("#qbar").style.width="100%";$("#feedback").textContent=`Правильных ответов: ${score} из ${qi.length}.`;$("#qnext").textContent="Пройти ещё раз";$("#qnext").disabled=false;return}$("#qmeta").textContent=`Вопрос ${qidx+1} из ${qi.length}`;$("#qbar").style.width=(qidx/qi.length*100)+"%";$("#question").textContent=q[0];$("#qnext").textContent=qidx===qi.length-1?"Результат":"Дальше →";$("#answers").innerHTML="";[...q[2]].sort(()=>Math.random()-.5).forEach(a=>{let b=document.createElement("button");b.className="answer";b.textContent=a;b.onclick=()=>answer(b,a,q);$("#answers").append(b)})}
-function answer(btn,a,q){if(locked)return;locked=true;let ok=a===q[1];if(ok)score++;S.total++;if(ok)S.right++;save();$$(".answer").forEach(b=>{b.disabled=true;if(b.textContent===q[1])b.classList.add("correct")});if(!ok)btn.classList.add("wrong");$("#feedback").textContent=ok?"Верно!":"Правильный ответ: "+q[1];$("#qnext").disabled=false}
-$("#qnext").onclick=()=>{if(qidx>=qi.length){startQuiz();return}qidx++;locked=false;showQ()};$("#restart").onclick=startQuiz;
-function progress(){let p=Math.round(S.known.length/DATA.length*100);$("#percent").textContent=p+"%";$("#progressText").textContent=`Изучено ${S.known.length} из ${DATA.length}. На повторение: ${S.review.length}.`;$("#breakdown").innerHTML=Object.entries(N).map(([k,n])=>{let total=DATA.filter(x=>x[0]===k).length,done=DATA.filter((x,i)=>x[0]===k&&S.known.includes(i)).length;return `<div class="breakitem"><b>${n}</b><br><span>${done} из ${total} карточек</span><div class="bar"><span style="width:${done/total*100}%"></span></div></div>`}).join("")}
-$("#reset").onclick=()=>{if(confirm("Сбросить весь прогресс на этом устройстве?")){S={known:[],review:[],right:0,total:0};save();progress();toast("Прогресс сброшен")}};
-$("#theme").onclick=()=>{document.body.classList.toggle("dark");localStorage.setItem("obTheme",document.body.classList.contains("dark")?"dark":"light")};if(localStorage.getItem("obTheme")==="dark")document.body.classList.add("dark");
-let installEvent;window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();installEvent=e;$("#install").hidden=false});$("#install").onclick=async()=>{if(installEvent){installEvent.prompt();await installEvent.userChoice;installEvent=null;$("#install").hidden=true}else toast("Открой меню Chrome и выбери «Установить приложение»")};
-if("serviceWorker"in navigator&&location.protocol.startsWith("http"))window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js"));
-stats();build();startQuiz();
+const DATA = [
+        ["pelvis", "Вход", "Границы плоскости входа?", "Спереди — верхний край лонного сочленения; сзади — крестцовый мыс; с боков — безымянные (дугообразные) линии."],
+        ["pelvis", "Вход", "Прямой размер входа (истинная конъюгата)?", "11 см."],
+        ["pelvis", "Вход", "Поперечный размер входа?", "13–13,5 см."],
+        ["pelvis", "Вход", "Косые размеры входа?", "12–12,5 см; от крестцово-подвздошного сочленения одной стороны до подвздошно-лонного возвышения другой."],
+        ["pelvis", "Широкая часть", "Границы широкой части полости малого таза?", "Спереди — середина внутренней поверхности лона; сзади — сочленение между 2-м и 3-м крестцовыми позвонками; с боков — внутренние поверхности вертлужных впадин."],
+        ["pelvis", "Широкая часть", "Размеры широкой части?", "Прямой — 12,5 см; поперечный — 12,5 см."],
+        ["pelvis", "Узкая часть", "Границы узкой части полости малого таза?", "Спереди — нижний край лонного сочленения; сзади — крестцово-копчиковое сочленение; с боков — седалищные ости."],
+        ["pelvis", "Узкая часть", "Размеры узкой части?", "Прямой — 11–11,5 см; поперечный — 10,5 см."],
+        ["pelvis", "Выход", "Границы плоскости выхода?", "Спереди — нижний край лона; сзади — верхушка копчика; с боков — седалищные бугры."],
+        ["pelvis", "Выход", "Прямой размер выхода?", "9,5 см; при отхождении копчика в родах увеличивается на 1,5–2 см и достигает 11–11,5 см."],
+        ["pelvis", "Выход", "Поперечный размер выхода?", "11,5 см."],
+        ["external", "Наружные размеры", "Distantia spinarum — ориентиры и норма?", "Между передневерхними остями подвздошных костей. 25–26 см."],
+        ["external", "Наружные размеры", "Distantia cristarum — ориентиры и норма?", "Между наиболее отдаленными точками гребней подвздошных костей. 28–29 см."],
+        ["external", "Наружные размеры", "Distantia trochanterica — ориентиры и норма?", "Между большими вертелами бедренных костей. 30–31 см."],
+        ["external", "Наружные размеры", "Conjugata externa — ориентиры и норма?", "От надкрестцовой ямки (верхний угол ромба Михаэлиса) до верхнего края лонного симфиза. 20–21 см."],
+        ["anatomy", "Роднички", "Малый родничок: форма и расположение?", "Треугольный; между затылочной и теменными костями."],
+        ["anatomy", "Роднички", "Большой родничок: форма и расположение?", "Ромбовидный; между лобными и теменными костями."],
+        ["anatomy", "Швы", "Где расположен ламбдовидный шов?", "Между затылочной и теменными костями."],
+        ["anatomy", "Швы", "Где расположен стреловидный / сагиттальный шов?", "Между двумя теменными костями."],
+        ["anatomy", "Швы", "Где расположен венечный шов?", "Между лобными и теменными костями."],
+        ["anatomy", "Ориентация", "Первая позиция плода — это…", "Спинка плода обращена влево."],
+        ["anatomy", "Ориентация", "Вторая позиция плода — это…", "Спинка плода обращена вправо."],
+        ["anatomy", "Ориентация", "Передний и задний вид — это…", "Передний — спинка кпереди; задний — спинка кзади."],
+        ["fetus", "Продольные размеры", "Малый косой размер: ориентиры и показатели?", "От подзатылочной ямки до переднего края большого родничка. 9,5 см / 32 см."],
+        ["fetus", "Продольные размеры", "Средний косой размер: ориентиры и показатели?", "От подзатылочной ямки до границы волосистой части лба. 10 см / 33 см."],
+        ["fetus", "Продольные размеры", "Прямой размер: ориентиры и показатели?", "От надпереносья до наиболее выступающей точки затылочного бугра. 12 см / 34–35 см."],
+        ["fetus", "Продольные размеры", "Большой косой размер: ориентиры и показатели?", "От подбородка до макушки (наиболее отдаленной точки затылка). 13,5 см / 38–42 см."],
+        ["fetus", "Продольные размеры", "Вертикальный (отвесный) размер: ориентиры и показатели?", "От подъязычной кости до середины большого родничка. 9,5 см / 32 см."],
+        ["fetus", "Поперечные размеры", "Малый поперечный размер: ориентиры и показатель?", "Между наиболее отдаленными точками венечного шва. Диаметр 8 см."],
+        ["fetus", "Поперечные размеры", "Большой поперечный размер: ориентиры и показатель?", "Между наиболее отдаленными точками теменных бугров. Диаметр 9,25–9,5 см."],
+        ["fetus", "Туловище", "Поперечный размер плечиков (Distantia biacromialis)?", "12–12,5 см / окружность 35 см."],
+        ["fetus", "Туловище", "Поперечный размер ягодиц (Distantia biiliacus)?", "9–9,5 см / окружность 27–28 см."]
+    ],
+    QB = [
+        ["Прямой размер входа в малый таз?", "11 см", ["9,5 см", "11 см", "12,5 см", "13,5 см"]],
+        ["Поперечный размер выхода?", "11,5 см", ["10,5 см", "11 см", "11,5 см", "13 см"]],
+        ["Норма Distantia spinarum?", "25–26 см", ["20–21 см", "25–26 см", "28–29 см", "30–31 см"]],
+        ["Малый родничок расположен…", "Между затылочной и теменными костями", ["Между лобными и теменными", "Между двумя теменными", "Между затылочной и теменными костями"]],
+        ["Диаметр малого поперечного размера головки?", "8 см", ["8 см", "9,5 см", "10 см", "12 см"]],
+        ["Окружность при малом косом размере?", "32 см", ["27–28 см", "32 см", "34–35 см", "38–42 см"]],
+        ["Прямой размер широкой части?", "12,5 см", ["10,5 см", "11 см", "12,5 см", "13,5 см"]],
+        ["Стреловидный шов расположен…", "Между двумя теменными костями", ["Между затылочной и теменными", "Между двумя теменными костями", "Между лобными и теменными"]],
+        ["Норма наружной конъюгаты?", "20–21 см", ["20–21 см", "25–26 см", "28–29 см", "30–31 см"]],
+        ["Окружность ягодиц плода?", "27–28 см", ["32 см", "35 см", "27–28 см", "38–42 см"]],
+        ["Диаметр большого косого размера головки?", "13,5 см", ["9,5 см", "10 см", "12 см", "13,5 см"]],
+        ["Какой размер выхода увеличивается при отхождении копчика?", "Прямой", ["Поперечный", "Прямой", "Оба одинаково"]],
+        ["Норма Distantia cristarum?", "28–29 см", ["25–26 см", "28–29 см", "30–31 см", "20–21 см"]],
+        ["Вторая позиция: спинка плода обращена…", "Вправо", ["Влево", "Вправо", "Кпереди", "Кзади"]],
+        ["Окружность плечиков?", "35 см", ["27–28 см", "32 см", "35 см", "38–42 см"]]
+    ],
+    N = {
+        pelvis: "Малый таз",
+        external: "Наружные размеры",
+        anatomy: "Анатомия",
+        fetus: "Размеры плода"
+    };
+let S = JSON.parse(localStorage.getItem("obstetricsPWA") || '{"known":[],"review":[],"right":0,"total":0}'),
+    deck = [],
+    idx = 0,
+    flipped = false,
+    filter = "all",
+    qi = [],
+    qidx = 0,
+    score = 0,
+    locked = false;
+const $ = s => document.querySelector(s),
+    $$ = s => [...document.querySelectorAll(s)];
+
+function save() {
+    localStorage.setItem("obstetricsPWA", JSON.stringify(S));
+    stats()
+}
+
+function stats() {
+    $("#learned").textContent = S.known.length;
+    $("#reviewCount").textContent = S.review.length;
+    $("#accuracy").textContent = S.total ? Math.round(S.right / S.total * 100) + "%" : "—"
+}
+
+function toast(t) {
+    let x = $("#toast");
+    x.textContent = t;
+    x.classList.add("show");
+    setTimeout(() => x.classList.remove("show"), 1600)
+}
+
+function page(p) {
+    $$(".page").forEach(x => x.classList.toggle("active", x.id === p));
+    $$("[data-tab]").forEach(x => x.classList.toggle("active", x.dataset.tab === p));
+    if (p === "progress") progress();
+    if (p === "reference") refs($("#search").value);
+    window.scrollTo(0, 0)
+}
+$$("[data-tab]").forEach(b => b.onclick = () => page(b.dataset.tab));
+$$("[data-page]").forEach(b => b.onclick = () => page(b.dataset.page));
+$$("[data-open]").forEach(b => b.onclick = () => {
+    page("cards");
+    build(b.dataset.filter)
+});
+
+function build(f = "all") {
+    filter = f;
+    deck = DATA.map((x, i) => ({
+        ...x,
+        id: i
+    })).filter(x => f === "all" || (f === "review" ? S.review.includes(x.id) : x[0] === f));
+    idx = 0;
+    flipped = false;
+    $$("[data-filter]").forEach(b => b.classList.toggle("sel", b.dataset.filter === f));
+    draw()
+}
+
+function draw() {
+    let c = deck[idx];
+    if (!c) {
+        $("#cat").textContent = "НЕТ КАРТОЧЕК";
+        $("#counter").textContent = "0 / 0";
+        $("#content").textContent = "В этом разделе пока нет карточек.";
+        return
+    }
+    $("#cat").textContent = N[c[0]] + " · " + c[1];
+    $("#counter").textContent = (idx + 1) + " / " + deck.length;
+    $("#side").textContent = flipped ? "ОТВЕТ" : "ВОПРОС";
+    $("#content").textContent = flipped ? c[3] : c[2];
+    $("#flip").textContent = flipped ? "Показать вопрос" : "Показать ответ";
+    $("#cardbar").style.width = ((idx + 1) / deck.length * 100) + "%"
+}
+
+function flip() {
+    if (deck.length) {
+        flipped = !flipped;
+        draw()
+    }
+}
+
+function move(n) {
+    if (deck.length) {
+        idx = (idx + n + deck.length) % deck.length;
+        flipped = false;
+        draw()
+    }
+}
+$("#card").onclick = flip;
+$("#flip").onclick = flip;
+$("#prev").onclick = () => move(-1);
+$("#next").onclick = () => move(1);
+$("#known").onclick = () => mark(true);
+$("#again").onclick = () => mark(false);
+
+function mark(k) {
+    let c = deck[idx];
+    if (!c) return;
+    S.known = S.known.filter(x => x !== c.id);
+    S.review = S.review.filter(x => x !== c.id);
+    (k ? S.known : S.review).push(c.id);
+    save();
+    toast(k ? "Отмечено: знаю" : "Добавлено на повторение");
+    move(1)
+}
+$("#filters").onclick = e => {
+    let b = e.target.closest("[data-filter]");
+    if (b) build(b.dataset.filter)
+};
+$("#shuffle").onclick = () => {
+    deck.sort(() => Math.random() - .5);
+    idx = 0;
+    flipped = false;
+    draw();
+    toast("Карточки перемешаны")
+};
+
+function refs(q = "") {
+    let groups = {};
+    DATA.forEach(c => {
+        if (c.join(" ").toLowerCase().includes(q.toLowerCase()))(groups[c[0]] ??= []).push(c)
+    });
+    $("#refs").innerHTML = Object.entries(groups).map(([k, v]) => `<div class="refgroup"><h3>${N[k]}</h3>${v.map(c=>`<article class="refitem"><b>${c[2]}</b><p>${c[3]}</p></article>`).join("")}</div>`).join("") || "<p>Ничего не найдено.</p>"
+}
+$("#search").oninput = e => refs(e.target.value);
+
+function startQuiz() {
+    qi = [...QB].sort(() => Math.random() - .5).slice(0, 10);
+    qidx = 0;
+    score = 0;
+    locked = false;
+    showQ()
+}
+
+function showQ() {
+    let q = qi[qidx];
+    $("#feedback").textContent = "";
+    $("#qnext").disabled = true;
+    if (!q) {
+        $("#question").textContent = "Тест завершён!";
+        $("#answers").innerHTML = "";
+        $("#qmeta").textContent = "Результат";
+        $("#qbar").style.width = "100%";
+        $("#feedback").textContent = `Правильных ответов: ${score} из ${qi.length}.`;
+        $("#qnext").textContent = "Пройти ещё раз";
+        $("#qnext").disabled = false;
+        return
+    }
+    $("#qmeta").textContent = `Вопрос ${qidx+1} из ${qi.length}`;
+    $("#qbar").style.width = (qidx / qi.length * 100) + "%";
+    $("#question").textContent = q[0];
+    $("#qnext").textContent = qidx === qi.length - 1 ? "Результат" : "Дальше →";
+    $("#answers").innerHTML = "";
+    [...q[2]].sort(() => Math.random() - .5).forEach(a => {
+        let b = document.createElement("button");
+        b.className = "answer";
+        b.textContent = a;
+        b.onclick = () => answer(b, a, q);
+        $("#answers").append(b)
+    })
+}
+
+function answer(btn, a, q) {
+    if (locked) return;
+    locked = true;
+    let ok = a === q[1];
+    if (ok) score++;
+    S.total++;
+    if (ok) S.right++;
+    save();
+    $$(".answer").forEach(b => {
+        b.disabled = true;
+        if (b.textContent === q[1]) b.classList.add("correct")
+    });
+    if (!ok) btn.classList.add("wrong");
+    $("#feedback").textContent = ok ? "Верно!" : "Правильный ответ: " + q[1];
+    $("#qnext").disabled = false
+}
+$("#qnext").onclick = () => {
+    if (qidx >= qi.length) {
+        startQuiz();
+        return
+    }
+    qidx++;
+    locked = false;
+    showQ()
+};
+$("#restart").onclick = startQuiz;
+
+function progress() {
+    let p = Math.round(S.known.length / DATA.length * 100);
+    $("#percent").textContent = p + "%";
+    $("#progressText").textContent = `Изучено ${S.known.length} из ${DATA.length}. На повторение: ${S.review.length}.`;
+    $("#breakdown").innerHTML = Object.entries(N).map(([k, n]) => {
+        let total = DATA.filter(x => x[0] === k).length,
+            done = DATA.filter((x, i) => x[0] === k && S.known.includes(i)).length;
+        return `<div class="breakitem"><b>${n}</b><br><span>${done} из ${total} карточек</span><div class="bar"><span style="width:${done/total*100}%"></span></div></div>`
+    }).join("")
+}
+$("#reset").onclick = () => {
+    if (confirm("Сбросить весь прогресс на этом устройстве?")) {
+        S = {
+            known: [],
+            review: [],
+            right: 0,
+            total: 0
+        };
+        save();
+        progress();
+        toast("Прогресс сброшен")
+    }
+};
+$("#theme").onclick = () => {
+    document.body.classList.toggle("dark");
+    localStorage.setItem("obTheme", document.body.classList.contains("dark") ? "dark" : "light")
+};
+if (localStorage.getItem("obTheme") === "dark") document.body.classList.add("dark");
+let installEvent;
+window.addEventListener("beforeinstallprompt", e => {
+    e.preventDefault();
+    installEvent = e;
+    $("#install").hidden = false
+});
+$("#install").onclick = async () => {
+    if (installEvent) {
+        installEvent.prompt();
+        await installEvent.userChoice;
+        installEvent = null;
+        $("#install").hidden = true
+    } else toast("Открой меню Chrome и выбери «Установить приложение»")
+};
+if ("serviceWorker" in navigator && location.protocol.startsWith("http")) window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js"));
+stats();
+build();
+startQuiz();

@@ -234,3 +234,34 @@ h3 { margin: 20px 0 10px; font-size: 18px; }
 .search-container input:not(:placeholder-shown) + .search-clear {
     display: block;
 }
+
+
+
+
+.install-btn {
+    position: fixed;
+    bottom: 85px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 101;
+
+    border: none;
+    border-radius: 14px;
+    padding: 13px 22px;
+
+    background: var(--accent);
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+}
+
+.install-btn:active {
+    background: var(--accent-hover);
+}
+
+.install-btn[hidden] {
+    display: none;
+}

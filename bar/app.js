@@ -403,4 +403,45 @@ goBack(animate = true, fromPopState = false, direction = 'right') {
     }
 };
 
+
+let installEvent;
+
+const installButton = document.getElementById('install');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+
+    installEvent = e;
+
+    if (installButton) {
+        installButton.hidden = false;
+    }
+});
+
+if (installButton) {
+    installButton.addEventListener('click', async () => {
+        if (!installEvent) {
+            alert('Открой меню браузера и выбери «Установить приложение»');
+            return;
+        }
+
+        installEvent.prompt();
+
+        await installEvent.userChoice;
+
+        installEvent = null;
+        installButton.hidden = true;
+    });
+}
+
+window.addEventListener('appinstalled', () => {
+    installEvent = null;
+
+    if (installButton) {
+        installButton.hidden = true;
+    }
+});
+
+
+
 window.onload = () => app.init();
