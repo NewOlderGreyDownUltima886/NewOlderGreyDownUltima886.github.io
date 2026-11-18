@@ -206,24 +206,38 @@ const app = {
         `).join('');
     },
 
+    // Логика поиска (по названию И по ингредиентам)
     handleSearch(query) {
         const categoryList = document.getElementById('category-list');
         const searchResults = document.getElementById('search-results');
         if (!categoryList || !searchResults) return;
         
+        // Если поле пустое — показываем категории, скрываем результаты
         if (query.trim() === '') {
             categoryList.style.display = 'flex'; 
             searchResults.style.display = 'none';
             return;
         }
 
+        // Если есть текст — скрываем категории, показываем результаты
         categoryList.style.display = 'none';
         searchResults.style.display = 'grid';
 
         const lowerQuery = query.toLowerCase();
-        const filteredDrinks = menuData.filter(drink => 
-            drink.name.toLowerCase().includes(lowerQuery)
-        );
+        
+        // УМНЫЙ ПОИСК: проверяем название коктейля ИЛИ наличие ингредиента
+        const filteredDrinks = menuData.filter(drink => {
+            // 1. Проверяем совпадение по названию коктейля
+            const matchesName = drink.name.toLowerCase().includes(lowerQuery);
+            
+            // 2. Проверяем совпадение по любому ингредиенту в составе
+            const matchesIngredient = drink.ingredients.some(ing => 
+                ing.name.toLowerCase().includes(lowerQuery)
+            );
+
+            // Возвращаем true, если совпало хоть что-то
+            return matchesName || matchesIngredient;
+        });
 
         if (filteredDrinks.length === 0) {
             searchResults.innerHTML = '<p style="color: gray; grid-column: span 2; text-align: center; margin-top: 20px;">Ничего не найдено</p>';
