@@ -31,17 +31,24 @@ const app = {
 
 // Настройка системной кнопки "Назад" (Android)
 setupHistory() {
-    // Добавляем фейковую запись, чтобы кнопка "Назад" не закрывала приложение сразу
+    // Добавляем запись в историю, чтобы перехватывать кнопку "Назад"
     history.pushState({ page: 'home' }, '');
     
     window.addEventListener('popstate', () => {
         const activeView = document.querySelector('.view.active');
+        
+        // Если мы НЕ на главной странице
         if (activeView && activeView.id !== 'view-home') {
-            // ВАЖНО: передаем true, чтобы срабатывала анимация, как при свайпе
+            // Запускаем анимацию возврата
             this.goBack(true);
             
-            // Возвращаем запись в историю, чтобы приложение не закрылось
+            // ВАЖНО: Возвращаем запись в историю, чтобы приложение не закрылось
+            // Это "защитный барьер" для следующего нажатия
             history.pushState({ page: 'home' }, ''); 
+        } else {
+            // Если мы на главной и нажали "Назад", 
+            // мы позволяем приложению закрыться (или можете добавить confirm)
+            // Но для PWA лучше просто позволить системе обработать выход.
         }
     });
 },
@@ -122,32 +129,38 @@ setupHistory() {
         window.scrollTo(0, 0);
     },
 
-    // Возврат назад с анимацией
-    goBack(animate = false) {
-        const activeView = document.querySelector('.view.active');
+// Возврат назад с анимацией
+goBack(animate = false) {
+    const activeView = document.querySelector('.view.active');
+    
+    if (animate && activeView) {
+        activeView.classList.add('swipe-out');
         
-        if (animate && activeView) {
-            activeView.classList.add('swipe-out');
+        // Ждем окончания анимации (200мс)
+        setTimeout(() => {
+            activeView.classList.remove('swipe-out');
             
-            // Ждем окончания анимации (200мс) и переключаем экран
-            setTimeout(() => {
-                activeView.classList.remove('swipe-out');
-                if (this.history.length > 0) {
-                    this.showView(this.history.pop());
-                } else {
-                    this.showView('home');
-                }
-            }, 200);
-        } else {
-            // Обычный возврат
+            // Достаем предыдущий экран из нашего внутреннего стека
             if (this.history.length > 0) {
-                this.showView(this.history.pop());
+                const prevView = this.history.pop();
+                this.showView(prevView);
             } else {
+                // Если история пуста, идем на главную
                 this.showView('home');
             }
+        }, 200);
+    } else {
+        // Обычный возврат (без анимации)
+        if (this.history.length > 0) {
+            const prevView = this.history.pop();
+            this.showView(prevView);
+        } else {
+            this.showView('home');
         }
-    },
+    }
+},
 
+    
     // Рендер Главной
     renderCategories() {
         const container = document.getElementById('category-list');
