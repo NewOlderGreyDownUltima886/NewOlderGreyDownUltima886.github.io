@@ -7,11 +7,6 @@ const app = {
     isEditing: false,
     history: [],
     
-    // Переменные для свайпа
-    touchStartX: 0,
-    touchStartY: 0,
-    isSwiping: false,
-    
     // Инициализация
     init() {
         this.loadData();
@@ -34,9 +29,9 @@ const app = {
         this.setupSwipe();
     },
 
-    // Настройка системной кнопки "Назад"
+    // Настройка системной кнопки "Назад" (Android)
     setupHistory() {
-        // Добавляем фейковую запись, чтобы кнопка "Назад" на Android не закрывала приложение сразу
+        // Добавляем фейковую запись, чтобы кнопка "Назад" не закрывала приложение сразу
         history.pushState({ page: 'home' }, '');
         
         window.addEventListener('popstate', () => {
@@ -44,43 +39,47 @@ const app = {
             if (activeView && activeView.id !== 'view-home') {
                 // Если мы не на главной, кнопка "Назад" возвращает на предыдущий экран
                 this.goBack();
-                // Возвращаем запись в историю
+                // Возвращаем запись в историю, чтобы приложение не закрылось
                 history.pushState({ page: 'home' }, ''); 
             }
         });
     },
 
-    // Настройка свайпа от левого края (для карточки)
+    // Настройка свайпа вправо для возврата (работает по всему экрану)
     setupSwipe() {
-        const detailView = document.getElementById('view-detail');
-        if (!detailView) return;
-        
-        detailView.addEventListener('touchstart', (e) => {
-            // Срабатывает только если палец коснулся левых 50 пикселей экрана
-            if (e.touches[0].clientX < 50) {
-                this.touchStartX = e.touches[0].clientX;
-                this.touchStartY = e.touches[0].clientY;
-                this.isSwiping = true;
-            }
+        let startX = 0;
+        let startY = 0;
+        let isSwiping = false;
+
+        // Вешаем события на весь документ
+        document.addEventListener('touchstart', (e) => {
+            const activeView = document.querySelector('.view.active');
+            // Не свайпаем на главной странице
+            if (!activeView || activeView.id === 'view-home') return;
+
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            isSwiping = true;
         }, { passive: true });
 
-        detailView.addEventListener('touchmove', (e) => {
-            if (!this.isSwiping) return;
+        document.addEventListener('touchmove', (e) => {
+            if (!isSwiping) return;
+            
             const currentX = e.touches[0].clientX;
             const currentY = e.touches[0].clientY;
             
-            const diffX = currentX - this.touchStartX;
-            const diffY = Math.abs(currentY - this.touchStartY);
+            const diffX = currentX - startX;
+            const diffY = Math.abs(currentY - startY);
 
-            // Проверяем, что свайп вправо и больше 80px, а вертикальное отклонение маленькое
+            // Проверяем: свайп вправо (diffX > 0) больше 80px и вертикальное отклонение маленькое
             if (diffX > 80 && diffY < 50) {
-                this.isSwiping = false;
-                this.goBack(true); // Передаем true для анимации
+                isSwiping = false;
+                this.goBack(true); 
             }
         }, { passive: true });
 
-        detailView.addEventListener('touchend', () => {
-            this.isSwiping = false;
+        document.addEventListener('touchend', () => {
+            isSwiping = false;
         });
     },
 
@@ -122,12 +121,14 @@ const app = {
         window.scrollTo(0, 0);
     },
 
-    // Обновленный метод возврата с анимацией
+    // Возврат назад с анимацией
     goBack(animate = false) {
         const activeView = document.querySelector('.view.active');
         
         if (animate && activeView) {
             activeView.classList.add('swipe-out');
+            
+            // Ждем окончания анимации (200мс) и переключаем экран
             setTimeout(() => {
                 activeView.classList.remove('swipe-out');
                 if (this.history.length > 0) {
@@ -135,8 +136,9 @@ const app = {
                 } else {
                     this.showView('home');
                 }
-            }, 300);
+            }, 200);
         } else {
+            // Обычный возврат
             if (this.history.length > 0) {
                 this.showView(this.history.pop());
             } else {
@@ -166,12 +168,14 @@ const app = {
         const searchResults = document.getElementById('search-results');
         if (!categoryList || !searchResults) return;
         
+        // Если поле пустое — показываем категории, скрываем результаты
         if (query.trim() === '') {
             categoryList.style.display = 'flex'; 
             searchResults.style.display = 'none';
             return;
         }
 
+        // Если есть текст — скрываем категории, показываем результаты
         categoryList.style.display = 'none';
         searchResults.style.display = 'grid';
 
