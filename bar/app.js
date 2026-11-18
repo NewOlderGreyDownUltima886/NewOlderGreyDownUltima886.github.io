@@ -87,11 +87,11 @@ const app = {
                     this.goBack(true, false, 'right');
                 }
 
-                // else if (diffX < -80) {
-                //     isSwiping = false;
+                else if (diffX < -80) {
+                    isSwiping = false;
 
-                //     this.goBack(true, false, 'left');
-                // }
+                    this.goBack(true, false, 'left');
+                }
             }
 
         }, { passive: true });
@@ -157,42 +157,48 @@ const app = {
 
 
 
-    goBack(animate = true, fromPopState = false, direction = 'right') {
-        const activeView = document.querySelector('.view.active');
+goBack(animate = true, fromPopState = false, direction = 'right') {
+    const activeView = document.querySelector('.view.active');
 
-        if (!activeView || activeView.id === 'view-home') return;
+    if (!activeView || activeView.id === 'view-home') return;
 
-        // Определяем предыдущий экран
-        const nextViewId = this.history.length > 0
-            ? this.history.pop()
-            : 'home';
+    // Если это свайп или вызов кнопки — ждём popstate
+    if (!fromPopState) {
+        this.pendingSwipeDirection = direction;
 
-        const outgoingView = activeView;
-
-        // Сначала показываем предыдущий экран
-        this.showView(nextViewId, false);
-
-        if (animate) {
-            const animationClass = direction === 'left'
-                ? 'swipe-out-left'
-                : 'swipe-out-right';
-
-            outgoingView.classList.add(animationClass);
-
-            setTimeout(() => {
-                outgoingView.classList.remove(
-                    'swipe-out-left',
-                    'swipe-out-right'
-                );
-            }, 200);
-        }
-
-        // Синхронизируем историю браузера,
-        // если возврат не вызван событием popstate
-        if (!fromPopState && window.history.state?.ttkApp) {
+        if (window.history.state?.ttkApp) {
             window.history.back();
+            return;
         }
-    },
+    }
+
+    // Определяем предыдущий экран
+    const nextViewId = this.history.length > 0
+        ? this.history.pop()
+        : 'home';
+
+    const outgoingView = activeView;
+
+    // Показываем предыдущий экран
+    this.showView(nextViewId, false);
+
+    if (animate) {
+        const animationClass = direction === 'left'
+            ? 'swipe-out-left'
+            : 'swipe-out-right';
+
+        outgoingView.classList.add(animationClass);
+
+        setTimeout(() => {
+            outgoingView.classList.remove(
+                'swipe-out-left',
+                'swipe-out-right'
+            );
+        }, 200);
+    }
+
+    this.pendingSwipeDirection = null;
+},
 
 
     renderCategories() {
