@@ -29,22 +29,11 @@ const app = {
         this.setupSwipe();
     },
 
-    // Настройка системной кнопки "Назад" (Android)
+    // Настройка системной кнопки "Назад" (ОТКЛЮЧЕНО)
     setupHistory() {
-        // Добавляем одну запись, чтобы перехватить первый клик
-        history.pushState({ page: 'home' }, '');
-        
-        window.addEventListener('popstate', () => {
-            const activeView = document.querySelector('.view.active');
-            
-            // Если мы не на главной
-            if (activeView && activeView.id !== 'view-home') {
-                // Вызываем возврат с анимацией
-                this.goBack(true);
-                // СРАЗУ возвращаем запись, чтобы следующее нажатие тоже перехватилось
-                history.pushState({ page: 'home' }, ''); 
-            }
-        });
+        // Мы больше не перехватываем историю браузера, 
+        // чтобы не ломать системную кнопку "Назад" на телефоне.
+        return; 
     },
 
     // Настройка свайпа вправо для возврата (работает по всему экрану)
@@ -123,37 +112,32 @@ const app = {
         window.scrollTo(0, 0);
     },
 
-// Возврат назад с анимацией
-goBack(animate = false) {
-    const activeView = document.querySelector('.view.active');
-    
-    if (animate && activeView) {
-        // 1. Сразу вычисляем, куда нам нужно вернуться
-        let nextViewId = 'home';
-        if (this.history.length > 0) {
-            nextViewId = this.history.pop();
-        }
-
-        // 2. Запускаем анимацию на текущем экране
-        activeView.classList.add('swipe-out');
+    // Возврат назад (используется для свайпов и кнопок на экране)
+    goBack(animate = false) {
+        const activeView = document.querySelector('.view.active');
         
-        // 3. Ждем 200мс, пока экран уезжает
-        setTimeout(() => {
-            // Убираем класс анимации
-            activeView.classList.remove('swipe-out');
+        if (animate && activeView) {
+            // Запускаем анимацию
+            activeView.classList.add('swipe-out');
             
-            // 4. Показываем новый экран
-            this.showView(nextViewId);
-        }, 200);
-    } else {
-        // Обычный возврат (без анимации)
-        if (this.history.length > 0) {
-            this.showView(this.history.pop());
+            // Ждем окончания анимации (200мс) и переключаем экран
+            setTimeout(() => {
+                activeView.classList.remove('swipe-out');
+                if (this.history.length > 0) {
+                    this.showView(this.history.pop());
+                } else {
+                    this.showView('home');
+                }
+            }, 200);
         } else {
-            this.showView('home');
+            // Обычный возврат без анимации (например, с кнопки "Назад" в шапке)
+            if (this.history.length > 0) {
+                this.showView(this.history.pop());
+            } else {
+                this.showView('home');
+            }
         }
-    }
-},
+    },
 
     
     // Рендер Главной
