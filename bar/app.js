@@ -3,6 +3,7 @@ const app = {
     isEditing: false,
     history: [],
     pendingSwipeDirection: null,
+    savedHomeScroll: 0,
     
     init() {
         this.loadData();
@@ -109,6 +110,7 @@ const app = {
         localStorage.setItem('ttk_menu_data', JSON.stringify(menuData));
     },
 
+
     showView(viewId, addHistory = true) {
         document.querySelectorAll('.view').forEach(v =>
             v.classList.remove('active')
@@ -118,23 +120,17 @@ const app = {
 
         if (viewId === 'home') {
             const searchInput = document.getElementById('search-input');
-            if (searchInput) searchInput.value = '';
+            const query = searchInput ? searchInput.value : '';
 
-            const categoryList = document.getElementById('category-list');
-            if (categoryList) categoryList.style.display = 'flex';
-
-            const searchResults = document.getElementById('search-results');
-            if (searchResults) searchResults.style.display = 'none';
+            this.handleSearch(query);
 
         } else if (addHistory) {
-            // Записываем переход вперёд
             window.history.pushState(
                 { ttkApp: true, view: viewId },
                 ''
             );
         }
 
-        // Подсветка нижнего меню
         document.querySelectorAll('.nav-item').forEach(n =>
             n.classList.remove('active')
         );
@@ -145,8 +141,16 @@ const app = {
         if (viewId === 'favorites')
             document.querySelectorAll('.nav-item')[1].classList.add('active');
 
-        window.scrollTo(0, 0);
+        if (viewId === 'home') {
+            // Восстанавливаем прокрутку после отрисовки результатов
+            requestAnimationFrame(() => {
+                window.scrollTo(0, this.savedHomeScroll);
+            });
+        } else {
+            window.scrollTo(0, 0);
+        }
     },
+
 
     goBack(animate = false, fromPopState = false, direction = 'right') {
         // Если возврат вызван свайпом или кнопкой внутри приложения,
@@ -269,10 +273,13 @@ const app = {
     },
 
     openDetail(id) {
+        // Сохраняем положение главной страницы
+        this.savedHomeScroll = window.scrollY;
+
         this.currentDrinkId = id;
         this.isEditing = false;
         this.renderDetail();
-        
+
         const currentView = document.querySelector('.view.active').id.replace('view-', '');
         this.history.push(currentView);
         this.showView('detail');
