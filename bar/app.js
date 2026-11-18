@@ -67,6 +67,13 @@ const app = {
                 isSwiping = false;
                 this.goBack(true); 
             }
+
+            // Проверяем: свайп влево (diffX < 0) больше 80px и вертикальное отклонение маленькое
+            if (diffX < 80 && diffY < 50) {
+                isSwiping = false;
+                this.goBack(true); 
+            }
+
         }, { passive: true });
 
         document.addEventListener('touchend', () => {
