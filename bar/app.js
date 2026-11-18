@@ -152,9 +152,10 @@ const app = {
     },
 
 
+
     goBack(animate = false, fromPopState = false, direction = 'right') {
-        // Если возврат вызван свайпом или кнопкой внутри приложения,
-        // используем настоящую историю браузера.
+
+        // Если возврат вызван свайпом или кнопкой внутри приложения
         if (!fromPopState) {
             if (window.history.state?.ttkApp) {
                 window.history.back();
@@ -164,37 +165,43 @@ const app = {
 
         const activeView = document.querySelector('.view.active');
 
+        if (!activeView) return;
+
+        // Определяем предыдущую страницу
         let nextViewId = 'home';
 
         if (this.history.length > 0) {
             nextViewId = this.history.pop();
         }
 
-        const finishBack = () => {
-            if (activeView) {
-                activeView.classList.remove(
-                    'swipe-out',
+        // Сохраняем ссылку на уходящую страницу
+        const outgoingView = activeView;
+
+        // СНАЧАЛА показываем предыдущую страницу
+        // Она уже будет находиться под карточкой
+        this.showView(nextViewId, false);
+
+        if (animate) {
+
+            // Запускаем анимацию поверх предыдущей страницы
+            const animationClass = direction === 'left'
+                ? 'swipe-out-left'
+                : 'swipe-out-right';
+
+            outgoingView.classList.add(animationClass);
+
+            // Удаляем старую страницу после анимации
+            setTimeout(() => {
+                outgoingView.classList.remove(
                     'swipe-out-left',
-                    'swipe-out-right'
+                    'swipe-out-right',
+                    'swipe-out'
                 );
-            }
+            }, 200);
 
-            // Важно: false означает, что новую запись не создаём
-            this.showView(nextViewId, false);
-        };
-
-        if (animate && activeView) {
-            activeView.classList.add(
-                direction === 'left'
-                    ? 'swipe-out-left'
-                    : 'swipe-out-right'
-            );
-
-            setTimeout(finishBack, 200);
-        } else {
-            finishBack();
         }
     },
+
 
     renderCategories() {
         const container = document.getElementById('category-list');
