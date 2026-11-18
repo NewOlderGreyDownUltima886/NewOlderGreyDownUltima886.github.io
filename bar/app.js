@@ -29,20 +29,33 @@ const app = {
         this.setupSwipe();
     },
 
-    // Настройка системной кнопки "Назад" (ОТКЛЮЧЕНО)
+    // Настройка системной кнопки "Назад" (Android)
     setupHistory() {
-        // Мы больше не перехватываем историю браузера, 
-        // чтобы не ломать системную кнопку "Назад" на телефоне.
-        return; 
+        // Добавляем фейковую запись, чтобы перехватить самый первый клик
+        history.pushState({ page: 'home' }, '');
+        
+        window.addEventListener('popstate', () => {
+            const activeView = document.querySelector('.view.active');
+            
+            // Если мы НЕ на главной странице
+            if (activeView && activeView.id !== 'view-home') {
+                // Запускаем анимацию и возврат
+                this.goBack(true);
+                
+                // СРАЗУ возвращаем запись в историю браузера, 
+                // чтобы приложение не закрылось и могло перехватить следующее нажатие
+                history.pushState({ page: 'home' }, ''); 
+            }
+            // Если мы на главной - ничего не делаем, позволяем системе обработать выход
+        });
     },
 
-    // Настройка свайпа вправо для возврата (работает по всему экрану)
+    // Настройка свайпа (в обе стороны: влево и вправо)
     setupSwipe() {
         let startX = 0;
         let startY = 0;
         let isSwiping = false;
 
-        // Вешаем события на весь документ
         document.addEventListener('touchstart', (e) => {
             const activeView = document.querySelector('.view.active');
             // Не свайпаем на главной странице
@@ -62,18 +75,19 @@ const app = {
             const diffX = currentX - startX;
             const diffY = Math.abs(currentY - startY);
 
-            // Проверяем: свайп вправо (diffX > 0) больше 80px и вертикальное отклонение маленькое
-            if (diffX > 80 && diffY < 50) {
-                isSwiping = false;
-                this.goBack(true); 
+            // Проверяем вертикальное отклонение (чтобы не мешать скроллу)
+            if (diffY < 50) {
+                // Свайп вправо (больше 80px)
+                if (diffX > 80) {
+                    isSwiping = false;
+                    this.goBack(true);
+                }
+                // Свайп влево (меньше -80px)
+                else if (diffX < -80) {
+                    isSwiping = false;
+                    this.goBack(true);
+                }
             }
-
-            // Проверяем: свайп влево (diffX < 0) больше 80px и вертикальное отклонение маленькое
-            if (diffX < 80 && diffY < 50) {
-                isSwiping = false;
-                this.goBack(true); 
-            }
-
         }, { passive: true });
 
         document.addEventListener('touchend', () => {
@@ -119,25 +133,27 @@ const app = {
         window.scrollTo(0, 0);
     },
 
-    // Возврат назад (используется для свайпов и кнопок на экране)
+    // Возврат назад (используется для свайпов, кнопок и системной кнопки)
     goBack(animate = false) {
         const activeView = document.querySelector('.view.active');
         
         if (animate && activeView) {
-            // Запускаем анимацию
+            // Сразу вычисляем, куда переходить, чтобы история не запуталась
+            let nextViewId = 'home';
+            if (this.history.length > 0) {
+                nextViewId = this.history.pop();
+            }
+
+            // Запускаем анимацию уезда
             activeView.classList.add('swipe-out');
             
-            // Ждем окончания анимации (200мс) и переключаем экран
+            // Ждем окончания анимации (200мс)
             setTimeout(() => {
                 activeView.classList.remove('swipe-out');
-                if (this.history.length > 0) {
-                    this.showView(this.history.pop());
-                } else {
-                    this.showView('home');
-                }
+                this.showView(nextViewId);
             }, 200);
         } else {
-            // Обычный возврат без анимации (например, с кнопки "Назад" в шапке)
+            // Обычный возврат без анимации
             if (this.history.length > 0) {
                 this.showView(this.history.pop());
             } else {
@@ -146,7 +162,6 @@ const app = {
         }
     },
 
-    
     // Рендер Главной
     renderCategories() {
         const container = document.getElementById('category-list');
@@ -168,14 +183,12 @@ const app = {
         const searchResults = document.getElementById('search-results');
         if (!categoryList || !searchResults) return;
         
-        // Если поле пустое — показываем категории, скрываем результаты
         if (query.trim() === '') {
             categoryList.style.display = 'flex'; 
             searchResults.style.display = 'none';
             return;
         }
 
-        // Если есть текст — скрываем категории, показываем результаты
         categoryList.style.display = 'none';
         searchResults.style.display = 'grid';
 
@@ -220,7 +233,6 @@ const app = {
         this.isEditing = false;
         this.renderDetail();
         
-        // Сохраняем историю для кнопки "Назад"
         const currentView = document.querySelector('.view.active').id.replace('view-', '');
         this.history.push(currentView);
         this.showView('detail');
@@ -235,7 +247,6 @@ const app = {
         document.getElementById('detail-glass').textContent = drink.glass;
         document.getElementById('detail-method').textContent = drink.method;
 
-        // Рендер ингредиентов
         const list = document.getElementById('ingredients-list');
         
         let html = '';
@@ -271,14 +282,12 @@ const app = {
         
         list.innerHTML = html;
 
-        // Настройка кнопок
         const favBtn = document.getElementById('fav-btn');
         const isFav = this.favorites.includes(drink.id);
         favBtn.textContent = isFav ? '♥ В избранном' : '♡ Сохранить в избранное';
         favBtn.className = isFav ? 'main-btn saved' : 'main-btn';
         favBtn.style.display = this.isEditing ? 'none' : 'block';
 
-        // Настройка режима редактирования
         document.getElementById('edit-btn').textContent = this.isEditing ? '💾 Сохранить' : '✏️';
         document.getElementById('upload-label').classList.toggle('hidden', !this.isEditing);
     },
