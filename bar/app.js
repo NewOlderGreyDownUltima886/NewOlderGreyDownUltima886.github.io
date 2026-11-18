@@ -87,11 +87,11 @@ const app = {
                     this.goBack(true, false, 'right');
                 }
 
-                else if (diffX < -80) {
-                    isSwiping = false;
+                // else if (diffX < -80) {
+                //     isSwiping = false;
 
-                    this.goBack(true, false, 'left');
-                }
+                //     this.goBack(true, false, 'left');
+                // }
             }
 
         }, { passive: true });
