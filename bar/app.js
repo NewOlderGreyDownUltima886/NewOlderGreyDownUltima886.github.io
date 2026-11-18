@@ -25,20 +25,13 @@ const app = {
     },
 
     setupHistory() {
-        history.pushState({ page: 'home' }, '');
-        
+        // Слушаем кнопку "Назад"
         window.addEventListener('popstate', () => {
             const activeView = document.querySelector('.view.active');
-            const viewName = activeView ? activeView.id : 'НЕТ';
             
-            // Отладка нажатия кнопки
-            alert("2. НАЖАТА СИСТЕМНАЯ КНОПКА НАЗАД\nТекущий экран: " + viewName + "\nНаш массив history: [" + this.history.join(', ') + "]");
-            
+            // Если мы не на главной, перехватываем и возвращаем
             if (activeView && activeView.id !== 'view-home') {
                 this.goBack(true);
-                history.pushState({ page: 'home' }, ''); 
-            } else {
-                alert("Мы на главной! Приложение сейчас закроется.");
             }
         });
     },
@@ -96,6 +89,7 @@ const app = {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
         document.getElementById(`view-${viewId}`).classList.add('active');
 
+        // СБРОС ПОИСКА ПРИ ПЕРЕХОДЕ НА ГЛАВНУЮ
         if (viewId === 'home') {
             const searchInput = document.getElementById('search-input');
             if (searchInput) searchInput.value = '';
@@ -105,8 +99,16 @@ const app = {
             
             const searchResults = document.getElementById('search-results');
             if (searchResults) searchResults.style.display = 'none';
+            
+            // Если мы на главной, мы не добавляем защитную запись.
+            // Теперь системная кнопка "Назад" закроет приложение (это нормально).
+        } else {
+            // ВАЖНО: Если мы НЕ на главной, мы "подкладываем" запись в историю.
+            // Это не даст браузеру закрыть приложение при следующем нажатии.
+            history.pushState({ page: viewId }, ''); 
         }
 
+        // Подсветка нижнего меню
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         if(viewId === 'home') document.querySelectorAll('.nav-item')[0].classList.add('active');
         if(viewId === 'favorites') document.querySelectorAll('.nav-item')[1].classList.add('active');
@@ -118,18 +120,17 @@ const app = {
         const activeView = document.querySelector('.view.active');
         
         if (animate && activeView) {
+            // Берем следующий экран из НАШЕГО внутреннего массива
             let nextViewId = 'home';
             if (this.history.length > 0) {
                 nextViewId = this.history.pop();
             }
 
-            // Отладка перехода
-            alert("3. ЗАПУСК goBack(animate=true)\nУходим с: " + (activeView ? activeView.id : 'НЕТ') + "\nПереходим на: " + nextViewId + "\nОстаток history: [" + this.history.join(', ') + "]");
-
             activeView.classList.add('swipe-out');
             
             setTimeout(() => {
                 activeView.classList.remove('swipe-out');
+                // Вызываем showView, который сам разберется с историей
                 this.showView(nextViewId);
             }, 200);
         } else {
