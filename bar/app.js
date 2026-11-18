@@ -29,29 +29,23 @@ const app = {
         this.setupSwipe();
     },
 
-// Настройка системной кнопки "Назад" (Android)
-setupHistory() {
-    // Добавляем запись в историю, чтобы перехватывать кнопку "Назад"
-    history.pushState({ page: 'home' }, '');
-    
-    window.addEventListener('popstate', () => {
-        const activeView = document.querySelector('.view.active');
+    // Настройка системной кнопки "Назад" (Android)
+    setupHistory() {
+        // Добавляем одну запись, чтобы перехватить первый клик
+        history.pushState({ page: 'home' }, '');
         
-        // Если мы НЕ на главной странице
-        if (activeView && activeView.id !== 'view-home') {
-            // Запускаем анимацию возврата
-            this.goBack(true);
+        window.addEventListener('popstate', () => {
+            const activeView = document.querySelector('.view.active');
             
-            // ВАЖНО: Возвращаем запись в историю, чтобы приложение не закрылось
-            // Это "защитный барьер" для следующего нажатия
-            history.pushState({ page: 'home' }, ''); 
-        } else {
-            // Если мы на главной и нажали "Назад", 
-            // мы позволяем приложению закрыться (или можете добавить confirm)
-            // Но для PWA лучше просто позволить системе обработать выход.
-        }
-    });
-},
+            // Если мы не на главной
+            if (activeView && activeView.id !== 'view-home') {
+                // Вызываем возврат с анимацией
+                this.goBack(true);
+                // СРАЗУ возвращаем запись, чтобы следующее нажатие тоже перехватилось
+                history.pushState({ page: 'home' }, ''); 
+            }
+        });
+    },
 
     // Настройка свайпа вправо для возврата (работает по всему экрану)
     setupSwipe() {
@@ -134,26 +128,27 @@ goBack(animate = false) {
     const activeView = document.querySelector('.view.active');
     
     if (animate && activeView) {
+        // 1. Сразу вычисляем, куда нам нужно вернуться
+        let nextViewId = 'home';
+        if (this.history.length > 0) {
+            nextViewId = this.history.pop();
+        }
+
+        // 2. Запускаем анимацию на текущем экране
         activeView.classList.add('swipe-out');
         
-        // Ждем окончания анимации (200мс)
+        // 3. Ждем 200мс, пока экран уезжает
         setTimeout(() => {
+            // Убираем класс анимации
             activeView.classList.remove('swipe-out');
             
-            // Достаем предыдущий экран из нашего внутреннего стека
-            if (this.history.length > 0) {
-                const prevView = this.history.pop();
-                this.showView(prevView);
-            } else {
-                // Если история пуста, идем на главную
-                this.showView('home');
-            }
+            // 4. Показываем новый экран
+            this.showView(nextViewId);
         }, 200);
     } else {
         // Обычный возврат (без анимации)
         if (this.history.length > 0) {
-            const prevView = this.history.pop();
-            this.showView(prevView);
+            this.showView(this.history.pop());
         } else {
             this.showView('home');
         }
