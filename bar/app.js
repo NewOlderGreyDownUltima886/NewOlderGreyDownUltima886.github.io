@@ -2,6 +2,7 @@ const app = {
     currentDrinkId: null,
     isEditing: false,
     history: [],
+    pendingSwipeDirection: null,
     
     init() {
         this.loadData();
@@ -19,19 +20,29 @@ const app = {
 
         this.setupHistory();
         this.setupSwipe();
-        
-        // Отладка старта
-        setTimeout(() => alert("1. ПРИЛОЖЕНИЕ ЗАГРУЖЕНО\nИстория браузера: " + history.length), 500);
     },
 
     setupHistory() {
-        // Слушаем кнопку "Назад"
+        // Помечаем текущую запись как главную страницу приложения
+        if (!window.history.state || !window.history.state.ttkApp) {
+            window.history.replaceState(
+                { ttkApp: true, view: 'home' },
+                ''
+            );
+        }
+
         window.addEventListener('popstate', () => {
             const activeView = document.querySelector('.view.active');
-            
-            // Если мы не на главной, перехватываем и возвращаем
+
             if (activeView && activeView.id !== 'view-home') {
-                this.goBack(true);
+                // Возвращаемся на предыдущий экран
+                this.goBack(
+                    true,
+                    true,
+                    this.pendingSwipeDirection || 'right'
+                );
+
+                this.pendingSwipeDirection = null;
             }
         });
     },
@@ -43,28 +54,41 @@ const app = {
 
         document.addEventListener('touchstart', (e) => {
             const activeView = document.querySelector('.view.active');
+
             if (!activeView || activeView.id === 'view-home') return;
 
             startX = e.touches[0].clientX;
             startY = e.touches[0].clientY;
             isSwiping = true;
+
         }, { passive: true });
 
         document.addEventListener('touchmove', (e) => {
             if (!isSwiping) return;
-            
+
             const currentX = e.touches[0].clientX;
             const currentY = e.touches[0].clientY;
-            
+
             const diffX = currentX - startX;
             const diffY = Math.abs(currentY - startY);
 
             if (diffY < 50) {
-                if (diffX > 80 || diffX < -80) {
+
+                if (diffX > 80) {
                     isSwiping = false;
-                    this.goBack(true); 
+
+                    this.pendingSwipeDirection = 'right';
+                    this.goBack(true, false, 'right');
+                }
+
+                else if (diffX < -80) {
+                    isSwiping = false;
+
+                    this.pendingSwipeDirection = 'left';
+                    this.goBack(true, false, 'left');
                 }
             }
+
         }, { passive: true });
 
         document.addEventListener('touchend', () => {
@@ -85,60 +109,86 @@ const app = {
         localStorage.setItem('ttk_menu_data', JSON.stringify(menuData));
     },
 
-    showView(viewId) {
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    showView(viewId, addHistory = true) {
+        document.querySelectorAll('.view').forEach(v =>
+            v.classList.remove('active')
+        );
+
         document.getElementById(`view-${viewId}`).classList.add('active');
 
-        // СБРОС ПОИСКА ПРИ ПЕРЕХОДЕ НА ГЛАВНУЮ
         if (viewId === 'home') {
             const searchInput = document.getElementById('search-input');
             if (searchInput) searchInput.value = '';
-            
+
             const categoryList = document.getElementById('category-list');
-            if (categoryList) categoryList.style.display = 'flex'; 
-            
+            if (categoryList) categoryList.style.display = 'flex';
+
             const searchResults = document.getElementById('search-results');
             if (searchResults) searchResults.style.display = 'none';
-            
-            // Если мы на главной, мы не добавляем защитную запись.
-            // Теперь системная кнопка "Назад" закроет приложение (это нормально).
-        } else {
-            // ВАЖНО: Если мы НЕ на главной, мы "подкладываем" запись в историю.
-            // Это не даст браузеру закрыть приложение при следующем нажатии.
-            history.pushState({ page: viewId }, ''); 
+
+        } else if (addHistory) {
+            // Записываем переход вперёд
+            window.history.pushState(
+                { ttkApp: true, view: viewId },
+                ''
+            );
         }
 
         // Подсветка нижнего меню
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        if(viewId === 'home') document.querySelectorAll('.nav-item')[0].classList.add('active');
-        if(viewId === 'favorites') document.querySelectorAll('.nav-item')[1].classList.add('active');
-        
+        document.querySelectorAll('.nav-item').forEach(n =>
+            n.classList.remove('active')
+        );
+
+        if (viewId === 'home')
+            document.querySelectorAll('.nav-item')[0].classList.add('active');
+
+        if (viewId === 'favorites')
+            document.querySelectorAll('.nav-item')[1].classList.add('active');
+
         window.scrollTo(0, 0);
     },
 
-    goBack(animate = false) {
+    goBack(animate = false, fromPopState = false, direction = 'right') {
+        // Если возврат вызван свайпом или кнопкой внутри приложения,
+        // используем настоящую историю браузера.
+        if (!fromPopState) {
+            if (window.history.state?.ttkApp) {
+                window.history.back();
+                return;
+            }
+        }
+
         const activeView = document.querySelector('.view.active');
-        
-        if (animate && activeView) {
-            // Берем следующий экран из НАШЕГО внутреннего массива
-            let nextViewId = 'home';
-            if (this.history.length > 0) {
-                nextViewId = this.history.pop();
+
+        let nextViewId = 'home';
+
+        if (this.history.length > 0) {
+            nextViewId = this.history.pop();
+        }
+
+        const finishBack = () => {
+            if (activeView) {
+                activeView.classList.remove(
+                    'swipe-out',
+                    'swipe-out-left',
+                    'swipe-out-right'
+                );
             }
 
-            activeView.classList.add('swipe-out');
-            
-            setTimeout(() => {
-                activeView.classList.remove('swipe-out');
-                // Вызываем showView, который сам разберется с историей
-                this.showView(nextViewId);
-            }, 200);
+            // Важно: false означает, что новую запись не создаём
+            this.showView(nextViewId, false);
+        };
+
+        if (animate && activeView) {
+            activeView.classList.add(
+                direction === 'left'
+                    ? 'swipe-out-left'
+                    : 'swipe-out-right'
+            );
+
+            setTimeout(finishBack, 200);
         } else {
-            if (this.history.length > 0) {
-                this.showView(this.history.pop());
-            } else {
-                this.showView('home');
-            }
+            finishBack();
         }
     },
 
