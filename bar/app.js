@@ -24,29 +24,35 @@ const app = {
     },
 
     setupHistory() {
-        // Помечаем текущую запись как главную страницу приложения
-        if (!window.history.state || !window.history.state.ttkApp) {
+        if (!window.history.state?.ttkApp) {
             window.history.replaceState(
                 { ttkApp: true, view: 'home' },
                 ''
             );
         }
 
-        window.addEventListener('popstate', () => {
+        window.addEventListener('popstate', (event) => {
             const activeView = document.querySelector('.view.active');
 
-            if (activeView && activeView.id !== 'view-home') {
-                // Возвращаемся на предыдущий экран
-                this.goBack(
-                    true,
-                    true,
-                    this.pendingSwipeDirection || 'right'
-                );
+            if (!activeView || activeView.id === 'view-home') return;
 
-                this.pendingSwipeDirection = null;
-            }
+            this.goBack(
+                true,
+                true,
+                this.pendingSwipeDirection || 'right'
+            );
+
+            this.pendingSwipeDirection = null;
         });
     },
+
+    clearSearch() {
+        const input = document.getElementById('search-input');
+        input.value = '';
+        this.handleSearch('');
+        input.focus();
+    },
+
 
     setupSwipe() {
         let startX = 0;
@@ -78,14 +84,12 @@ const app = {
                 if (diffX > 80) {
                     isSwiping = false;
 
-                    this.pendingSwipeDirection = 'right';
                     this.goBack(true, false, 'right');
                 }
 
                 else if (diffX < -80) {
                     isSwiping = false;
 
-                    this.pendingSwipeDirection = 'left';
                     this.goBack(true, false, 'left');
                 }
             }
@@ -153,52 +157,40 @@ const app = {
 
 
 
-    goBack(animate = false, fromPopState = false, direction = 'right') {
-
-        // Если возврат вызван свайпом или кнопкой внутри приложения
-        if (!fromPopState) {
-            if (window.history.state?.ttkApp) {
-                window.history.back();
-                return;
-            }
-        }
-
+    goBack(animate = true, fromPopState = false, direction = 'right') {
         const activeView = document.querySelector('.view.active');
 
-        if (!activeView) return;
+        if (!activeView || activeView.id === 'view-home') return;
 
-        // Определяем предыдущую страницу
-        let nextViewId = 'home';
+        // Определяем предыдущий экран
+        const nextViewId = this.history.length > 0
+            ? this.history.pop()
+            : 'home';
 
-        if (this.history.length > 0) {
-            nextViewId = this.history.pop();
-        }
-
-        // Сохраняем ссылку на уходящую страницу
         const outgoingView = activeView;
 
-        // СНАЧАЛА показываем предыдущую страницу
-        // Она уже будет находиться под карточкой
+        // Сначала показываем предыдущий экран
         this.showView(nextViewId, false);
 
         if (animate) {
-
-            // Запускаем анимацию поверх предыдущей страницы
             const animationClass = direction === 'left'
                 ? 'swipe-out-left'
                 : 'swipe-out-right';
 
             outgoingView.classList.add(animationClass);
 
-            // Удаляем старую страницу после анимации
             setTimeout(() => {
                 outgoingView.classList.remove(
                     'swipe-out-left',
-                    'swipe-out-right',
-                    'swipe-out'
+                    'swipe-out-right'
                 );
             }, 200);
+        }
 
+        // Синхронизируем историю браузера,
+        // если возврат не вызван событием popstate
+        if (!fromPopState && window.history.state?.ttkApp) {
+            window.history.back();
         }
     },
 
