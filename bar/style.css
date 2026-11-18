@@ -151,9 +151,9 @@ h3 { margin: 20px 0 10px; font-size: 18px; }
     border-color: var(--accent);
 }
 
-/* Анимация для свайпа назад */
+/* Ускоренная анимация для свайпа назад (было 0.3s, стало 0.2s) */
 .view.swipe-out {
-    animation: swipeOut 0.3s ease-in forwards;
+    animation: swipeOut 0.2s ease-in forwards;
 }
 
 @keyframes swipeOut {
