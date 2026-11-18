@@ -29,21 +29,22 @@ const app = {
         this.setupSwipe();
     },
 
-    // Настройка системной кнопки "Назад" (Android)
-    setupHistory() {
-        // Добавляем фейковую запись, чтобы кнопка "Назад" не закрывала приложение сразу
-        history.pushState({ page: 'home' }, '');
-        
-        window.addEventListener('popstate', () => {
-            const activeView = document.querySelector('.view.active');
-            if (activeView && activeView.id !== 'view-home') {
-                // Если мы не на главной, кнопка "Назад" возвращает на предыдущий экран
-                this.goBack();
-                // Возвращаем запись в историю, чтобы приложение не закрылось
-                history.pushState({ page: 'home' }, ''); 
-            }
-        });
-    },
+// Настройка системной кнопки "Назад" (Android)
+setupHistory() {
+    // Добавляем фейковую запись, чтобы кнопка "Назад" не закрывала приложение сразу
+    history.pushState({ page: 'home' }, '');
+    
+    window.addEventListener('popstate', () => {
+        const activeView = document.querySelector('.view.active');
+        if (activeView && activeView.id !== 'view-home') {
+            // ВАЖНО: передаем true, чтобы срабатывала анимация, как при свайпе
+            this.goBack(true);
+            
+            // Возвращаем запись в историю, чтобы приложение не закрылось
+            history.pushState({ page: 'home' }, ''); 
+        }
+    });
+},
 
     // Настройка свайпа вправо для возврата (работает по всему экрану)
     setupSwipe() {
