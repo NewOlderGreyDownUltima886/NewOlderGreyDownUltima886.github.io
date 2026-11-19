@@ -23,16 +23,18 @@
         <!-- НОВЫЙ БЛОК ПОИСКА -->
         <div class="search-container">
             <input 
-                type="text" 
-                id="search-input" 
-                placeholder="Поиск по названию..." 
-                oninput="app.handleSearch(this.value)"
-                autocomplete="off" 
-                autocorrect="off" 
-                autocapitalize="off" 
-                spellcheck="false"
-                name="cocktail_search"
-            >
+    type="text" 
+    id="search-input" 
+    placeholder="Поиск по названию..." 
+    oninput="app.handleSearch(this.value)"
+    onkeydown="if(event.key === 'Enter') this.blur();"
+    autocomplete="off" 
+    autocorrect="off" 
+    autocapitalize="off" 
+    spellcheck="false"
+    name="cocktail_search"
+    enterkeyhint="search"
+>
             <button
                 type="button"
                 class="search-clear"
