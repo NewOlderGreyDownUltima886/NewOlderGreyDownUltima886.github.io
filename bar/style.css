@@ -265,3 +265,282 @@ h3 { margin: 20px 0 10px; font-size: 18px; }
 .install-btn[hidden] {
     display: none;
 }
+
+
+
+
+
+
+
+
+
+
+/* НОВЫЕ СТИЛИ ОТ ЧАТГПТ!!!!!!!!!!!!!!!!!! */
+/* ===== NEON PURPLE THEME ===== */
+
+:root {
+    --bg-color: #090711;
+    --card-bg: #171226;
+    --text-main: #f8f5ff;
+    --text-muted: #aaa1bd;
+    --accent: #a855f7;
+    --accent-hover: #9333ea;
+
+    --neon: #c084fc;
+    --neon-soft: rgba(168, 85, 247, 0.18);
+    --border: rgba(192, 132, 252, 0.16);
+}
+
+/* Фон приложения */
+body {
+    background:
+        radial-gradient(ellipse at 50% -15%, #291044 0%, transparent 55%),
+        var(--bg-color);
+    color: var(--text-main);
+}
+
+/* Заголовки */
+header h1 {
+    letter-spacing: -0.8px;
+    text-shadow: 0 0 22px rgba(168, 85, 247, 0.25);
+}
+
+header p {
+    color: var(--text-muted);
+}
+
+/* Категории */
+.category-list {
+    gap: 16px;
+}
+
+.category-card {
+    background: linear-gradient(135deg, #211532, #151020);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, border-color 0.2s ease,
+                box-shadow 0.2s ease;
+}
+
+.category-card h3 {
+    color: #f3e8ff;
+}
+
+.category-card p {
+    color: var(--text-muted);
+}
+
+.category-card > span {
+    color: var(--neon);
+    font-size: 28px;
+}
+
+@media (hover: hover) {
+    .category-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(192, 132, 252, 0.55);
+        box-shadow: 0 0 22px var(--neon-soft);
+    }
+}
+
+/* Карточки напитков */
+.drink-grid {
+    gap: 14px;
+}
+
+.drink-card {
+    background: linear-gradient(160deg, #211832, #151020);
+    border: 1px solid var(--border);
+    border-radius: 17px;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.22);
+    transition: transform 0.2s ease, border-color 0.2s ease,
+                box-shadow 0.2s ease;
+}
+
+.drink-card img {
+    background: #211832;
+}
+
+.drink-card h4 {
+    color: #f5edff;
+    line-height: 1.35;
+}
+
+@media (hover: hover) {
+    .drink-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(192, 132, 252, 0.5);
+        box-shadow: 0 0 20px var(--neon-soft);
+    }
+}
+
+/* Карточка напитка */
+.detail-content {
+    background: #0d0917;
+    border: 1px solid rgba(192, 132, 252, 0.1);
+    border-bottom: none;
+}
+
+.detail-header h2 {
+    text-shadow: 0 0 18px rgba(168, 85, 247, 0.2);
+}
+
+.tag {
+    background: #211832;
+    border: 1px solid var(--border);
+}
+
+.tag:first-child {
+    background: linear-gradient(135deg, #9333ea, #6b21a8);
+    border-color: transparent;
+    box-shadow: 0 0 14px rgba(168, 85, 247, 0.25);
+}
+
+.ingredients-list li {
+    border-bottom-color: rgba(192, 132, 252, 0.13);
+}
+
+/* Поля редактирования */
+.ingredients-list input {
+    background: #1c142b;
+    border: 1px solid #49305f;
+    color: white;
+}
+
+/* Кнопки */
+.main-btn {
+    background: linear-gradient(135deg, #a855f7, #7e22ce);
+    box-shadow: 0 5px 22px rgba(147, 51, 234, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.main-btn:active {
+    transform: scale(0.98);
+    box-shadow: 0 0 25px rgba(168, 85, 247, 0.4);
+}
+
+.main-btn.saved {
+    background: #241a34;
+    border: 1px solid var(--border);
+}
+
+/* Нижняя навигация */
+.bottom-nav {
+    background: rgba(17, 12, 29, 0.94);
+    border-top: 1px solid var(--border);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.nav-item {
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.nav-item.active {
+    color: var(--neon);
+    text-shadow: 0 0 13px rgba(192, 132, 252, 0.65);
+}
+
+/* Поиск */
+.search-container input {
+    background-color: #191226;
+    border-color: var(--border);
+    padding-right: 48px;
+    box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.15);
+}
+
+.search-container input:focus {
+    border-color: var(--neon);
+    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.13),
+                0 0 18px rgba(168, 85, 247, 0.12);
+}
+
+.search-clear {
+    color: var(--neon);
+}
+
+/* Кнопка установки */
+.install-btn {
+    background: linear-gradient(135deg, #a855f7, #7e22ce);
+    box-shadow: 0 0 24px rgba(168, 85, 247, 0.35);
+}
+
+/* ===== АНИМАЦИИ ===== */
+
+/* Плавный вход нового экрана */
+.view.active {
+    animation: viewEnter 0.28s ease both;
+}
+
+@keyframes viewEnter {
+    from {
+        opacity: 0;
+        transform: translateY(9px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Появление категорий и карточек */
+.category-card,
+.drink-card {
+    animation: cardEnter 0.32s ease both;
+}
+
+@keyframes cardEnter {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.985);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Небольшая последовательная задержка */
+.category-card:nth-child(2),
+.drink-card:nth-child(2) {
+    animation-delay: 35ms;
+}
+
+.category-card:nth-child(3),
+.drink-card:nth-child(3) {
+    animation-delay: 70ms;
+}
+
+.category-card:nth-child(4),
+.drink-card:nth-child(4) {
+    animation-delay: 105ms;
+}
+
+.category-card:nth-child(5),
+.drink-card:nth-child(5) {
+    animation-delay: 140ms;
+}
+
+.category-card:nth-child(6),
+.drink-card:nth-child(6) {
+    animation-delay: 175ms;
+}
+
+/* Не отключаем анимацию свайпа */
+.view.swipe-out-left,
+.view.swipe-out-right {
+    animation-duration: 0.2s;
+}
+
+/* Уважение системной настройки уменьшения движения */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
