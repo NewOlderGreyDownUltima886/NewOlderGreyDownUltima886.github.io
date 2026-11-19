@@ -374,7 +374,7 @@ goBack(animate = true, fromPopState = false, direction = 'right') {
         favBtn.className = isFav ? 'main-btn saved' : 'main-btn';
         favBtn.style.display = this.isEditing ? 'none' : 'block';
 
-        document.getElementById('edit-btn').textContent = this.isEditing ? '💾 Сохранить' : '✏️';
+        // document.getElementById('edit-btn').textContent = this.isEditing ? '💾 Сохранить' : '✏️';
         document.getElementById('upload-label').classList.toggle('hidden', !this.isEditing);
     },
 
