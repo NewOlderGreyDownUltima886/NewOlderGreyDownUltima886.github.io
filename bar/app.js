@@ -53,6 +53,26 @@ const app = {
         input.focus();
     },
 
+    goHome() {
+        const homeView = document.getElementById('view-home');
+
+        // Если уже на главной — очищаем поиск
+        if (homeView.classList.contains('active')) {
+            const input = document.getElementById('search-input');
+
+            if (input && input.value.trim() !== '') {
+                input.value = '';
+                this.handleSearch('');
+                this.savedHomeScroll = 0;
+                window.scrollTo(0, 0);
+            }
+
+            return;
+        }
+
+        // Если на другом экране — возвращаемся на главную
+        this.showView('home');
+    },
 
     setupSwipe() {
         let startX = 0;
