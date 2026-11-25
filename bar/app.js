@@ -339,6 +339,15 @@ const app = {
         rocks: { name:"Рокс", icon:"M6 6 H18 L16 21 H8 Z", bowl:"M65 130 H255 L235 350 H85 Z", inner:"M73 137 H247 L228 342 H92 Z", top:[65,130,255,130], clip:[73,137,174,205], garnish:[85,130] },
         oldfashioned: { name:"Олд Фэшн", icon:"M3 5 H21 V21 H3 Z", bowl:"M65 130 H255 V345 Q255 355 245 355 H75 Q65 355 65 345 Z", inner:"M73 137 H247 V340 Q247 347 238 347 H82 Q73 347 73 340 Z", top:[65,130,255,130], clip:[73,137,174,205], garnish:[85,130] },
         highball: { name:"Хайбол", icon:"M5 2 H19 L18 22 H6 Z", bowl:"M85 70 H235 L225 350 H95 Z", inner:"M93 77 H227 L218 343 H102 Z", top:[85,70,235,70], clip:[93,77,134,260], garnish:[100,70] },
+        halfhighball: { 
+            name:"Полу-хайбол", icon:"M5 7 H19 L18 22 H6 Z", 
+            // Уменьшили высоту (с 70 до 150)
+            bowl:"M85 150 H235 L225 350 H95 Z", 
+            inner:"M93 157 H227 L218 343 H102 Z", 
+            top:[85,150,235,150], 
+            clip:[93,157,134,180], 
+            garnish:[100,150] 
+        },
         sling: { name:"Слинг", icon:"M5 2 H19 L15 15 L12 19 L9 15 Z", bowl:"M65 60 H255 L160 320 L220 345 H100 L160 320 Z", inner:"M75 68 H245 L160 310 Z", top:[65,60,255,60], clip:[75,68,170,242], garnish:[85,60] },
         martini: { name:"Мартини", icon:"M3 3 H21 L12 14 Z M12 14 V22 M7 22 H17", bowl:"M65 65 H255 L160 215 Z", inner:"M74 72 H246 L160 202 Z", top:[65,65,255,65], clip:[74,72,172,135], garnish:[80,65], stem:"M160 215 V350 M110 350 Q160 357 210 350" },
         coupe: { name:"Шале", icon:"M3 5 Q12 19 21 5 M3 5 H21 M12 14 V22 M7 22 H17", bowl:"M65 130 Q65 190 160 205 Q255 190 255 130 Z", inner:"M73 137 Q74 183 160 197 Q246 183 247 137 Z", top:[65,130,255,130], clip:[73,82,174,115], garnish:[80,130], stem:"M160 205 V350 M110 350 Q160 357 210 350" },
@@ -355,7 +364,11 @@ const app = {
         if (name.includes('рокс')) return 'rocks';
         if (name.includes('олд')) return 'oldfashioned';
         if (name.includes('слинг')) return 'sling';
-        if (name.includes('хайбол')) return 'highball';
+        if (name.includes('хайбол')) {
+            // Если в названии есть слово "полу" или "короткий", выбираем полу-хайбол
+            if (name.includes('полу') || name.includes('коротк')) return 'halfhighball';
+            return 'highball';
+        }
         if (name.includes('шале')) return 'coupe';
         if (name.includes('мартини') || name.includes('маргарит')) return 'martini';
         if (name.includes('вино')) return 'wine';
@@ -536,9 +549,18 @@ const app = {
         `).join('');
 
         const colors = ["#f6d15a","#e75b5b","#58a9e8","#8bdb70","#592b1c","#dca16c","#eee9df","#b47ce0","#ef8b38","#c94f91","#4dc9b2","#6074cc"];
-        document.getElementById('v-colorPicker').innerHTML = colors.map(c => `
+        let colorsHTML = colors.map(c => `
             <div class="v-color ${this.visual.color === c ? 'active' : ''}" style="background:${c}" onclick="app.updateVisual('color', '${c}'); app.initVisualEditorUI();"></div>
         `).join('');
+        
+        // Добавляем кнопку "Свой цвет" (Color Picker)
+        colorsHTML += `
+            <div class="v-color-custom ${!colors.includes(this.visual.color) ? 'active' : ''}" style="position: relative; overflow: hidden; border-radius: 50%; width: 36px; height: 36px; border: 2px solid white; background: ${colors.includes(this.visual.color) ? 'transparent' : this.visual.color}; display: flex; justify-content: center; align-items: center; cursor: pointer;">
+                <input type="color" value="${this.visual.color}" style="position: absolute; width: 200%; height: 200%; opacity: 0; cursor: pointer;" oninput="app.updateVisual('color', this.value); app.initVisualEditorUI();">
+                <span style="pointer-events: none; font-size: 16px;">🎨</span>
+            </div>
+        `;
+        document.getElementById('v-colorPicker').innerHTML = colorsHTML;
 
         const garnishes = { lemon:"Лимон", lime:"Лайм", orange:"Апельсин", straw:"Трубочка", bamboo:"Бамбук", flag:"Флажок", oreo:"Oreo" };
         document.getElementById('v-garnishPicker').innerHTML = Object.entries(garnishes).map(([id, name]) => {
