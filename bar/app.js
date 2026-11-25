@@ -75,7 +75,7 @@ const app = {
 
     setupSwipe() {
 
-        return;
+        // return;
 
         let startX = 0, startY = 0, isSwiping = false;
         document.addEventListener('touchstart', (e) => {
