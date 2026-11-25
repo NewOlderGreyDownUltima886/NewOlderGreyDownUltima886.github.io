@@ -202,8 +202,16 @@ const app = {
     },
 
     getVisualStateFor(id, glassName) {
+        // 1. Сначала ищем жестко заданные настройки в файле config.js
+        if (typeof cocktailVisuals !== 'undefined' && cocktailVisuals[id]) {
+            return JSON.parse(JSON.stringify(cocktailVisuals[id])); // Глубокая копия, чтобы не портить константу
+        }
+        
+        // 2. Если в конфиге нет, ищем в LocalStorage (на случай если вы настраивали локально и не экспортировали)
         const saved = localStorage.getItem(`ttk_visual_${id}`);
         if (saved) return JSON.parse(saved);
+
+        // 3. Если нигде нет, отдаем дефолт
         const glassId = this.getGlassId(glassName);
         return {
             glass: glassId, color: '#dca16c', garnishes: [], 
