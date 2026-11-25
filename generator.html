@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mixology Studio</title>
+
+<style>
+:root {
+ --bg:#101015;
+ --panel:#191921;
+ --panel2:#252530;
+ --accent:#9663ff;
+ --text:#f5f3fa;
+ --muted:#9997a5;
+}
+*{box-sizing:border-box; user-select: none;}
+body{
+ margin:0;height:100dvh;overflow:hidden;
+ background:var(--bg);color:var(--text);
+ font-family:system-ui,sans-serif;
+ display:flex;flex-direction:column;
+}
+header{
+ height:55px;flex-shrink:0;padding:0 20px;
+ display:flex;align-items:center;justify-content:space-between;
+ background:#17171e;border-bottom:1px solid #ffffff12
+}
+.logo{font-weight:900;letter-spacing:1px;font-size:16px}
+.logo span{color:var(--accent)}
+.header-actions { display: flex; gap: 10px; }
+.btn-download {
+  background: var(--accent); color: white; border: none;
+  padding: 6px 12px; border-radius: 8px; font-size: 12px;
+  font-weight: bold; cursor: pointer;
+}
+.preview{
+ flex:1;min-height:190px;position:relative;
+ display:flex;align-items:center;justify-content:center;
+ overflow:hidden;
+ background:radial-gradient(ellipse at 50% 45%,#30303d 0%,#1b1b25 45%,#101015 85%);
+}
+.preview:after{
+ content:"";position:absolute;bottom:10%;
+ width:240px;height:20px;border-radius:50%;
+ background:#000;filter:blur(20px);
+ pointer-events: none;
+}
+.stage{
+ position:relative;z-index:1;
+ width:min(340px,85vw);
+ height:min(410px,95%);
+ display:flex;align-items:center;justify-content:center;
+ transform-origin:center;
+ transition:transform .15s;
+ touch-action: none;
+}
+#cocktail{width:100%;height:100%;overflow:visible}
+
+.garnish-editor {
+  position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+  background: #191921d9; backdrop-filter: blur(10px);
+  border: 1px solid #ffffff20; border-radius: 12px;
+  padding: 10px 15px; z-index: 5; display: none;
+  align-items: center; gap: 15px; flex-wrap: wrap; justify-content: center;
+  width: 90%;
+}
+.garnish-editor.active { display: flex; }
+.garnish-editor label { font-size: 11px; color: var(--muted); }
+.garnish-editor input[type=range] { width: 80px; accent-color: var(--accent); }
+.btn-delete { 
+  background: #ff4b4b20; color: #ff6b6b; border: 1px solid #ff4b4b40;
+  padding: 5px 10px; border-radius: 6px; font-size: 11px; cursor: pointer;
+}
+
+.selected-garnish .garnish-transform {
+  outline: 1px dashed var(--accent);
+  outline-offset: 5px;
+  background: rgba(150, 99, 255, 0.1);
+}
+
+.zoom{
+ position:absolute;z-index:3;bottom:12px;right:14px;
+ display:flex;align-items:center;gap:8px;
+ background:#191921d9;border:1px solid #ffffff20;
+ padding:7px 10px;border-radius:12px;
+ backdrop-filter:blur(10px);
+}
+.zoom button{
+ border:0;background:transparent;color:white;
+ font-size:19px;cursor:pointer;width:24px
+}
+.zoom input{width:85px;accent-color:var(--accent)}
+.zoom span{font-size:10px;color:var(--muted);min-width:30px}
+.controls{
+ flex-shrink:0;max-height:50%;overflow-y:auto;
+ padding:17px 18px;
+ background:var(--panel);
+ border-top:1px solid #ffffff12;
+ border-radius:22px 22px 0 0;
+}
+.controls::-webkit-scrollbar{width:4px}
+.controls::-webkit-scrollbar-thumb{background:#484653;border-radius:10px}
+.section{margin-bottom:20px}
+.section-head{
+ display:flex;justify-content:space-between;
+ align-items:center;margin-bottom:11px;gap:8px
+}
+.section-title{
+ color:var(--muted);font-size:10px;font-weight:850;
+ letter-spacing:1.7px
+}
+.info{color:var(--muted);font-size:10px}
+.glass-grid{
+ display:flex;gap:8px;overflow-x:auto;padding-bottom:5px
+}
+.glass-btn{
+ flex-shrink:0;width:82px;height:77px;
+ background:var(--panel2);border:1px solid transparent;
+ border-radius:13px;color:#aaa9b6;
+ display:flex;flex-direction:column;align-items:center;
+ justify-content:center;gap:5px;font-size:10px;cursor:pointer
+}
+.glass-btn svg{width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:1.7}
+.glass-btn.active{background:#302442;border-color:var(--accent);color:white}
+.color-grid{display:flex;gap:12px;align-items:center;overflow-x:auto;padding:5px}
+.color-btn{
+ width:32px;height:32px;flex-shrink:0;border-radius:50%;
+ border:2px solid #ffffff40;cursor:pointer
+}
+.color-btn.active{outline:2px solid var(--accent);outline-offset:3px}
+.custom-color{
+ width:35px;height:35px;flex-shrink:0;border:0;
+ border-radius:50%;overflow:hidden;padding:0;cursor:pointer
+}
+.custom-color::-webkit-color-swatch-wrapper{padding:0}
+.custom-color::-webkit-color-swatch{border:2px solid white;border-radius:50%}
+.garnish-grid{display:flex;flex-wrap:wrap;gap:7px}
+.choice{
+ padding:9px 14px;border-radius:10px;
+ background:var(--panel2);border:1px solid #ffffff13;
+ color:#c6c4d0;font-size:11px;cursor:pointer
+}
+.choice.active{background:#392953;border-color:var(--accent);color:white}
+.choice.active:before{content:"✓ ";color:#c7aaff}
+.modifier{
+ background:#20202a;border:1px solid #ffffff12;
+ border-radius:12px;padding:12px;margin-top:9px
+}
+.modifier-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.modifier-title{font-size:12px;font-weight:700}
+.modifier-desc{font-size:10px;color:var(--muted);margin-top:4px}
+.modifier-content{margin-top:12px}
+.toggle{
+ appearance:none;width:36px;height:20px;
+ background:#484653;border-radius:20px;position:relative;
+ cursor:pointer;flex-shrink:0
+}
+.toggle:after{
+ content:"";position:absolute;width:14px;height:14px;
+ background:white;border-radius:50%;top:3px;left:3px;transition:.2s
+}
+.toggle:checked{background:var(--accent)}
+.toggle:checked:after{left:19px}
+.layer-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.layer-item{
+ background:#292934;border:1px solid #ffffff12;
+ padding:9px;border-radius:9px;min-width:0
+}
+.layer-item label{font-size:10px;color:var(--muted);display:block;margin-bottom:6px}
+.layer-item input[type=color]{width:100%;height:30px;border:0;background:none;cursor:pointer}
+.select{
+ width:100%;padding:10px;border-radius:8px;
+ color:white;background:#292934;border:1px solid #ffffff18
+}
+.bottom-row{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.ice-control{display:flex;align-items:center;gap:9px;font-size:12px;cursor:pointer}
+.switch{width:35px;height:20px;background:#444;border-radius:20px;position:relative}
+.switch:after{content:"";position:absolute;width:14px;height:14px;top:3px;left:3px;background:white;border-radius:50%;transition:.2s}
+.ice-control input{display:none}
+.ice-control input:checked+.switch{background:var(--accent)}
+.ice-control input:checked+.switch:after{left:18px}
+.reset{background:transparent;border:1px solid #ffffff18;color:var(--muted);padding:8px 12px;border-radius:8px;font-size:11px;cursor:pointer}
+.hidden{display:none!important}
+</style>
+</head>
+
+<body>
+<header>
+ <div class="logo">MIXOLOGY <span>STUDIO</span></div>
+ <div class="header-actions">
+   <button class="btn-download" id="downloadBtn">⬇ Скачать PNG</button>
+ </div>
+</header>
+
+<main style="display:flex;flex:1;min-height:0;flex-direction:column">
+ <div class="preview" id="preview">
+   
+   <div class="garnish-editor" id="garnishEditor">
+     <label>Размер:</label>
+     <input type="range" id="garnishScale" min="0.5" max="5" step="0.1" value="1">
+     <span id="garnishScaleVal" style="font-size: 11px; min-width: 30px;">1.0x</span>
+     <button class="btn-delete" id="deleteGarnish">Удалить</button>
+   </div>
+
+  <div class="stage" id="stage">
+   <svg id="cocktail" viewBox="0 0 320 420"></svg>
+  </div>
+
+  <div class="zoom">
+   <button id="zoomOut">−</button>
+   <input id="zoomSlider" type="range" min="45" max="140" value="100">
+   <button id="zoomIn">+</button>
+   <span id="zoomValue">100%</span>
+  </div>
+ </div>
+
+ <div class="controls">
+
+  <section class="section">
+   <div class="section-head">
+    <div class="section-title">01 / Посуда</div>
+    <div class="info">Выбери форму</div>
+   </div>
+   <div class="glass-grid" id="glassPicker"></div>
+  </section>
+
+  <section class="section">
+   <div class="section-head">
+    <div class="section-title">02 / Цвет жидкости</div>
+    <div class="info">Палитра</div>
+   </div>
+   <div class="color-grid" id="colorPicker"></div>
+  </section>
+
+  <section class="section" id="garnishSection">
+   <div class="section-head">
+    <div class="section-title">03 / Украшения</div>
+    <div class="info" id="garnishInfo">Выбрано: 0</div>
+   </div>
+   <div class="garnish-grid" id="garnishPicker"></div>
+  </section>
+
+  <section class="section">
+   <div class="section-head">
+    <div class="section-title">04 / Модификаторы</div>
+   </div>
+
+   <div class="modifier" id="foamModifier">
+    <div class="modifier-head">
+     <div>
+      <div class="modifier-title">Пенка</div>
+      <div class="modifier-desc">Пышный слой пены на поверхности</div>
+     </div>
+     <input class="toggle" type="checkbox" id="foamToggle">
+    </div>
+   </div>
+
+   <div class="modifier" id="layersModifier">
+    <div class="modifier-head">
+     <div>
+      <div class="modifier-title">Три слоя напитка</div>
+      <div class="modifier-desc">Раздельная настройка цветов слоёв</div>
+     </div>
+     <input class="toggle" type="checkbox" id="layersToggle">
+    </div>
+    <div class="modifier-content hidden" id="layerSettings">
+     <div class="layer-row">
+      <div class="layer-item">
+       <label>Нижний</label>
+       <input type="color" id="layer1" value="#54271c">
+      </div>
+      <div class="layer-item">
+       <label>Средний</label>
+       <input type="color" id="layer2" value="#d9a04b">
+      </div>
+      <div class="layer-item">
+       <label>Верхний</label>
+       <input type="color" id="layer3" value="#f1dfb0">
+      </div>
+     </div>
+    </div>
+   </div>
+
+   <div class="modifier">
+    <div class="modifier-head">
+     <div>
+      <div class="modifier-title">Окантовка края</div>
+      <div class="modifier-desc">Декоративное покрытие ободка</div>
+     </div>
+    </div>
+    <div class="modifier-content">
+     <select class="select" id="rimSelect">
+      <option value="none">Без покрытия</option>
+      <option value="salt">Соль</option>
+      <option value="coconut">Кокосовая стружка</option>
+      <option value="chocolate">Шоколад</option>
+     </select>
+    </div>
+   </div>
+  </section>
+
+  <div class="bottom-row">
+   <label class="ice-control" id="iceControl">
+    <input type="checkbox" id="iceToggle" checked>
+    <span class="switch"></span>
+    Лёд
+   </label>
+   <button class="reset" id="reset">↻ Сбросить</button>
+  </div>
+ </div>
+</main>
+
+<script>
+/* =========================
+   ПОСУДА (ИСПРАВЛЕН СЛИНГ)
+========================= */
+const glasses={
+ rocks:{
+  name:"Рокс",icon:"M6 6 H18 L16 21 H8 Z",
+  // Дно уже верха (65 до 255 сверху, 85 до 235 снизу)
+  bowl:"M65 130 H255 L235 350 H85 Z",
+  inner:"M73 137 H247 L228 342 H92 Z",
+  top:[65,130,255,130],
+  clip:[73,137,174,205],
+  garnish:[85,130],
+  ice:[83,165,144,170]
+ },
+ oldfashioned:{
+  name:"Олд Фэшн",icon:"M3 5 H21 V21 H3 Z",
+  bowl:"M65 130 H255 V345 Q255 355 245 355 H75 Q65 355 65 345 Z",
+  inner:"M73 137 H247 V340 Q247 347 238 347 H82 Q73 347 73 340 Z",
+  top:[65,130,255,130],
+  clip:[73,137,174,205],
+  garnish:[85,130],
+  ice:[83,165,154,170]
+ },
+ highball:{
+  name:"Хайбол",icon:"M5 2 H19 L18 22 H6 Z",
+  bowl:"M85 70 H235 L225 350 H95 Z",
+  inner:"M93 77 H227 L218 343 H102 Z",
+  top:[85,70,235,70],
+  clip:[93,77,134,260],
+  garnish:[100,70],
+  ice:[105,115,110,215]
+ },
+ sling:{
+  name:"Слинг",icon:"M5 2 H19 L15 15 L12 19 L9 15 Z",
+  // Идеальная симметрия (центр X=160)
+  // Верх: от 65 до 255. 
+  // Правая стенка вниз к 160, 320.
+  // Основание: от 160, 320 вправо до 220, 390, затем влево до 100, 390.
+  // Левая стенка вверх к 65, 60.
+  bowl:"M65 60 H255 L160 320 L220 345 H100 L160 320 Z",
+  
+  // Внутренняя часть (жидкость)
+//   inner:"M75 68 H245 L160 310 L205 335 H115 L160 310 Z",
+  inner:"M75 68 H245 L160 310 Z",
+  
+  top:[65,60,255,60],
+  clip:[75,68,170,242],
+  garnish:[85,60],
+  ice:[100,100,120,200]
+ },
+ martini:{
+  name:"Мартини",icon:"M3 3 H21 L12 14 Z M12 14 V22 M7 22 H17",
+  bowl:"M65 65 H255 L160 215 Z",
+  inner:"M74 72 H246 L160 202 Z",
+  top:[65,65,255,65],
+  clip:[74,72,172,135],
+  garnish:[80,65],
+  ice:[120,90,80,85],
+  stem:"M160 215 V350 M110 350 Q160 357 210 350"
+ },
+ coupe:{
+  name:"Шале",icon:"M3 5 Q12 19 21 5 M3 5 H21 M12 14 V22 M7 22 H17",
+  bowl:"M65 130 Q65 190 160 205 Q255 190 255 130 Z",
+  inner:"M73 137 Q74 183 160 197 Q246 183 247 137 Z",
+  top:[65,130,255,130],
+  clip:[73,82,174,115],
+  garnish:[80,130],
+  ice:[116,110,88,70],
+  stem:"M160 205 V350 M110 350 Q160 357 210 350"
+ },
+ wine:{
+  name:"Вино",icon:"M7 3 Q7 16 12 16 Q17 16 17 3 Z M12 16 V22 M7 22 H17",
+  bowl:"M95 65 Q95 195 160 220 Q225 195 225 65 Z",
+  inner:"M103 72 Q103 188 160 212 Q217 188 217 72 Z",
+  top:[95,65,225,65],
+  clip:[103,72,114,140],
+  garnish:[105,65],
+  ice:[125,105,70,95],
+  stem:"M160 220 V350 M110 350 Q160 357 210 350"
+ },
+ champagne:{
+  name:"Флюте",icon:"M8 2 Q8 17 12 17 Q16 17 16 2 Z M12 17 V22 M7 22 H17",
+  bowl:"M115 65 Q115 190 160 220 Q205 190 205 65 Z",
+  inner:"M123 72 Q123 185 160 212 Q197 185 197 72 Z",
+  top:[115,65,205,65],
+  clip:[123,72,74,140],
+  garnish:[125,65],
+  ice:[135,100,50,100],
+  stem:"M160 220 V350 M110 350 Q160 357 210 350"
+ },
+ shot:{
+  name:"Шот",icon:"M6 5 H18 L16 22 H8 Z",
+  bowl:"M112 165 H208 L197 350 H123 Z",
+  inner:"M120 172 H200 L190 343 H130 Z",
+  top:[112,165,208,165],
+  clip:[120,172,80,171],
+  garnish:[130,165],
+  ice:[130,195,60,120],
+  noIce:true,
+  noGarnish:true,
+  noFoam:true
+ },
+ beer:{
+  name:"Кружка",icon:"M5 3 H16 V22 H5 Z M16 8 H21 V18 H16",
+  bowl:"M82 100 H218 V350 H82 Z",
+  inner:"M90 108 H210 V342 H90 Z",
+  top:[82,100,218,100],
+  clip:[90,108,120,234],
+  garnish:[95,100],
+  ice:[102,140,116,180],
+  handle:true
+ }
+};
+
+/* =========================
+   СОСТОЯНИЕ
+========================= */
+const state={
+ glass:"rocks",
+ color:"#dca16c",
+ garnishes:[], 
+ ice:true,
+ foam:false,
+ layers:false,
+ layerColors:["#54271c","#d9a04b","#f1dfb0"],
+ rim:"none",
+ zoom:100,
+ activeGarnishIndex: -1 
+};
+
+const colors=["#f6d15a","#e75b5b","#58a9e8","#8bdb70","#592b1c","#dca16c","#eee9df","#b47ce0","#ef8b38","#c94f91","#4dc9b2","#6074cc","#a8c7a5","#d9b5d9","#a3a3a3"];
+const garnishesList={ lemon:"Лимон", lime:"Лайм", orange:"Апельсин", straw:"Трубочка", bamboo:"Бамбук", flag:"Флажок", oreo:"Oreo" };
+const $=id=>document.getElementById(id);
+
+/* =========================
+   КНОПКИ И ИНТЕРФЕЙС
+========================= */
+Object.entries(glasses).forEach(([id,g])=>{
+ const b=document.createElement("button");
+ b.className="glass-btn";
+ b.dataset.id=id;
+ b.innerHTML=`<svg viewBox="0 0 24 24"><path d="${g.icon}"/></svg>${g.name}`;
+ b.onclick=()=>{state.glass=id; state.activeGarnishIndex=-1; update()};
+ $("glassPicker").appendChild(b);
+});
+
+colors.forEach(c=>{
+ const b=document.createElement("button");
+ b.className="color-btn";
+ b.style.background=c;
+ b.onclick=()=>{state.color=c;update()};
+ $("colorPicker").appendChild(b);
+});
+
+const custom=document.createElement("input");
+custom.type="color";
+custom.className="custom-color";
+custom.title="Свой цвет";
+custom.value=state.color;
+custom.oninput=e=>{state.color=e.target.value;update()};
+$("colorPicker").appendChild(custom);
+
+Object.entries(garnishesList).forEach(([id,name])=>{
+ const b=document.createElement("button");
+ b.className="choice";
+ b.textContent=name;
+ b.dataset.id=id;
+ b.onclick=()=>{
+    // Если гарнир с таким id уже есть — выходим из onclick
+    if (state.garnishes.some(item => item.id === id)) {
+        return;
+    }
+
+   const g = glasses[state.glass];
+
+   let topY;
+   let startX;
+   let startY;
+
+    // отдельно для Трубочки
+    if (id == "straw") {
+        // Берем координаты верхнего края стакана
+        topY = g.top[1]; 
+        
+        // Позиция по X: отступаем от левого края на 30 пикселей
+        startX = g.top[2] - 40; 
+        
+        // Позиция по Y: поднимаем на 15 пикселей ВЫШЕ края, чтобы создать эффект "надетости"
+        startY = topY + 40;   
+    } else {
+        // Берем координаты верхнего края стакана
+        topY = g.top[1]; 
+        
+        // Позиция по X: делаем чтобы лимон итд делался серединкой по левому краю бокала
+        startX = g.top[0] - 42; 
+        
+        // Позиция по Y: поднимаем на 15 пикселей ВЫШЕ края, чтобы создать эффект "надетости"
+        startY = topY - 15; 
+    }
+
+   state.garnishes.push({ 
+        id: id, 
+        x: startX, 
+        y: startY, 
+        scale: 1.5, 
+    });
+   state.activeGarnishIndex = state.garnishes.length - 1;
+   update();
+ };
+ $("garnishPicker").appendChild(b);
+});
+
+/* =========================
+   МОДИФИКАТОРЫ
+========================= */
+$("iceToggle").onchange=e=>{state.ice=e.target.checked;update()};
+$("foamToggle").onchange=e=>{state.foam=e.target.checked;update()};
+$("layersToggle").onchange=e=>{
+ state.layers=e.target.checked;
+ $("layerSettings").classList.toggle("hidden",!state.layers);
+ update();
+};
+
+["layer1","layer2","layer3"].forEach((id,i)=>{
+ $(id).oninput=e=>{state.layerColors[i]=e.target.value;update()};
+});
+
+$("rimSelect").onchange=e=>{state.rim=e.target.value;update()};
+
+/* =========================
+   ЦВЕТОВЫЕ ФУНКЦИИ
+========================= */
+function colorChange(hex,amount){
+ const n=parseInt(hex.slice(1),16);
+ const r=Math.max(0,Math.min(255,(n>>16)+amount));
+ const g=Math.max(0,Math.min(255,((n>>8)&255)+amount));
+ const b=Math.max(0,Math.min(255,(n&255)+amount));
+ return "#"+[r,g,b].map(v=>Math.round(v).toString(16).padStart(2,"0")).join("");
+}
+
+/* =========================
+   ЖИДКОСТЬ (ИСПРАВЛЕНА ПЕНКА)
+========================= */
+function liquidSVG(g){
+ let out="";
+ if(state.glass==="shot"){
+  if(state.layers){
+   out += `
+    <rect x="0" y="165" width="320" height="63" fill="${state.layerColors[2]}"/>
+    <rect x="0" y="228" width="320" height="58" fill="${state.layerColors[1]}"/>
+    <rect x="0" y="286" width="320" height="134" fill="${state.layerColors[0]}"/>
+    <path d="M0 228 H320 M0 286 H320" stroke="#ffffff" stroke-opacity=".35" stroke-width="2"/>
+   `;
+  }else{
+   out+=`<rect width="320" height="420" fill="${state.color}"/>`;
+  }
+  return out;
+ }
+
+ if(state.layers){
+  out+=`
+   <rect width="320" height="420" fill="${state.layerColors[0]}"/>
+   <path d="M0 260 H320 V420 H0Z" fill="${state.layerColors[1]}"/>
+   <path d="M0 180 H320 V260 H0Z" fill="${state.layerColors[2]}"/>
+   <path d="M0 180 H320 M0 260 H320" stroke="#fff" stroke-opacity=".22" stroke-width="1.5"/>
+  `;
+ }else{
+  out+=`<rect width="320" height="420" fill="url(#liquid)"/>`;
+ }
+
+ // ПЕНКА: Уменьшена в 3 раза
+ if(state.foam && !g.noFoam){
+   const topY = g.top[1]; 
+   let foamHTML = `<rect x="0" y="${topY}" width="320" height="15" fill="#fffcf5"/>`;
+
+   const bubbles = [
+     {x: 20, y: topY+7, r: 4}, {x: 60, y: topY+9, r: 6}, {x: 105, y: topY+5, r: 4},
+     {x: 145, y: topY+10, r: 5}, {x: 185, y: topY+8, r: 7}, {x: 230, y: topY+7, r: 5},
+     {x: 275, y: topY+9, r: 6}, {x: 310, y: topY+5, r: 4}, {x: 40, y: topY+2, r: 3},
+     {x: 130, y: topY+3, r: 4}, {x: 215, y: topY+1, r: 3}, {x: 295, y: topY+2, r: 4}
+   ];
+
+   bubbles.forEach(b => {
+     foamHTML += `<circle cx="${b.x}" cy="${b.y}" r="${b.r}" fill="#fffcf5"/>`;
+     foamHTML += `<circle cx="${b.x - b.r/3}" cy="${b.y - b.r/3}" r="${b.r/2.5}" fill="#ffffff" opacity="0.6"/>`;
+   });
+   
+   foamHTML += `<path d="M0 ${topY+15} Q20 ${topY+18} 40 ${topY+15} T80 ${topY+15} T120 ${topY+15} T160 ${topY+15} T200 ${topY+15} T240 ${topY+15} T280 ${topY+15} T320 ${topY+15} V${topY+20} H0 Z" fill="#f2e6d8" opacity="0.9"/>`;
+
+   out += `<g>${foamHTML}</g>`;
+ }
+ 
+ return out;
+}
+
+
+/* =========================
+   ЛЁД
+========================= */
+function iceSVG(g){
+ if(!state.ice || g.noIce) return "";
+ 
+ let out = "";
+ const size = 32; // Крупный лед
+ const gap = 45; // Большое расстояние между кубиками
+ 
+ // Начинаем генерацию с уровня чуть ниже верхнего края стакана
+ const startY = g.top[1] + 20;
+ 
+ let row = 0;
+ for(let cy = startY; cy < 420; cy += gap){
+  // Чередуем ряды, чтобы не было "кирпичной кладки"
+  const offsetX = (row % 2) * (gap / 2);
+  for(let cx = 0; cx < 320; cx += gap){
+   // Добавляем случайное смещение, чтобы льдины не стояли ровно
+   const ix = cx + offsetX + (Math.random() * 10 - 5);
+   const iy = cy + (Math.random() * 10 - 5);
+   // Случайный угол наклона
+   const a = Math.random() * 40 - 20;
+   
+   // Делаем лед более прозрачным, чтобы он не выделялся как "кирпич"
+   out+=`
+    <g transform="translate(${ix} ${iy}) rotate(${a} ${size/2} ${size/2})">
+     <rect width="${size}" height="${size}" rx="6" fill="url(#ice)" stroke="#fff" stroke-opacity=".3" stroke-width="1"/>
+     <!-- Внутренний блик для объема -->
+     <path d="M4 4 H16 L4 16Z" fill="#fff" opacity=".3"/>
+    </g>`;
+  }
+  row++;
+ }
+ return out;
+}
+
+/* =========================
+   УКРАШЕНИЯ 
+========================= */
+function citrus(type){
+ const lime=type==="lime";
+ const main=lime?"#79bd48":"#f5a52d", light=lime?"#b8e889":"#ffe28a", dark=lime?"#3d8539":"#c47720";
+ return `
+  <path d="M0 19 Q28 -11 57 19 Q28 47 0 19Z" fill="${main}" stroke="${dark}" stroke-width="2"/>
+  <path d="M5 19 Q28 -4 52 19 Q28 40 5 19Z" fill="${light}" stroke="#fff" stroke-opacity=".5"/>
+  <path d="M28 3 V35 M12 11 L21 19 M44 11 L35 19" stroke="${dark}" stroke-width="1.7" fill="none"/>
+  <path d="M28 5 L28 33 M8 19 H49" stroke="#fff" stroke-opacity=".35" stroke-width="1"/>
+ `;
+}
+function orange(){
+ return `
+  <circle cx="22" cy="22" r="21" fill="#e98722" stroke="#ad5919" stroke-width="2"/>
+  <circle cx="22" cy="22" r="17" fill="#ffc65e"/>
+  <circle cx="22" cy="22" r="3" fill="#fff1b4"/>
+  ${Array.from({length:8},(_,i)=>{
+   const a=i*Math.PI/4, x1=22+Math.cos(a)*4,y1=22+Math.sin(a)*4, x2=22+Math.cos(a)*16,y2=22+Math.sin(a)*16;
+   return `<path d="M${x1} ${y1} L${x2} ${y2}" stroke="#e99836" stroke-width="2"/>`;
+  }).join("")}
+ `;
+}
+function oreo(){
+ return `
+  <circle cx="22" cy="22" r="21" fill="#171414" stroke="#57504c" stroke-width="2"/>
+  <circle cx="22" cy="22" r="16" fill="#282322" stroke="#70615a"/>
+  <circle cx="22" cy="22" r="10" fill="#f3e9d7"/>
+  <circle cx="22" cy="22" r="6" fill="#292322"/>
+  <path d="M22 7 V37 M7 22 H37 M11 11 L33 33 M33 11 L11 33" stroke="#65544c" stroke-width="1.6"/>
+ `;
+}
+function bamboo(){
+ return `
+  <path d="M0 0 Q-10 -45 4 -100 Q15 -155 5 -205 Q38 -170 30 -120 Q25 -65 0 0Z" fill="#3f983c" stroke="#286b30" stroke-width="2"/>
+  <path d="M0 0 Q20 -90 5 -205" stroke="#a5d76b" stroke-width="2.4" fill="none"/>
+  <path d="M5 -35 L-3 -54 M10 -65 L22 -85 M12 -100 L0 -120 M13 -135 L26 -155 M10 -170 L2 -182" stroke="#76bb4e" stroke-width="1.5" fill="none"/>
+ `;
+}
+function straw() {
+  // Если flip = true, трубочка наклоняется влево (координата X становится -22)
+  const dx = 60;
+  
+  return `
+  <g>
+    <!-- Основная черная трубка -->
+    <path d="M0 0 L${dx} -155" stroke="#1a1a1a" stroke-width="10" stroke-linecap="round"/>
+    <!-- Серый блик по центру -->
+    <path d="M${dx > 0 ? 1 : -1} 0 L${dx > 0 ? dx + 1 : dx - 1} -155" stroke="#4a4a4a" stroke-width="3" stroke-linecap="round"/>
+    <!-- Тонкий белый блик -->
+    <path d="M${dx > 0 ? -1 : 1} 0 L${dx > 0 ? dx - 1 : dx + 1} -155" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+  </g>
+ `;
+}
+function flag(){
+ return `
+  <path d="M0 0 L0 -125" stroke="#c9a96c" stroke-width="3"/>
+  <path d="M2 -125 Q25 -115 52 -120 L48 -90 Q24 -94 2 -83Z" fill="#e94555" stroke="#a52b3b" stroke-width="1.5"/>
+  <path d="M5 -120 Q25 -110 47 -116" fill="none" stroke="#ffb2a5" stroke-width="2"/>
+ `;
+}
+function getGarnishPath(id) {
+  if(id==="lemon") return citrus("lemon");
+  if(id==="lime") return citrus("lime");
+  if(id==="orange") return orange();
+  if(id==="oreo") return oreo();
+  if(id==="bamboo") return bamboo();
+  if(id==="straw") return straw();
+  if(id==="flag") return flag();
+  return "";
+}
+
+/* =========================
+   ОКАНТОВКА
+========================= */
+function rimSVG(g){
+ if(state.rim==="none")return "";
+ const [x1,y1,x2,y2]=g.top;
+ let fill="#fff";
+ if(state.rim==="salt")fill="#fffdf3";
+ if(state.rim==="coconut")fill="#eee2cb";
+ if(state.rim==="chocolate")fill="#5b291c";
+ const length=Math.hypot(x2-x1,y2-y1);
+ let out="";
+ for(let i=0;i<=length;i+=4){
+  const t=i/length, x=x1+(x2-x1)*t, y=y1+(y2-y1)*t;
+  const seed=Math.sin(i*12.9898)*43758.5453, random=seed-Math.floor(seed), r=state.rim==="coconut"?1.7:1.35;
+  out+=`<circle cx="${x}" cy="${y+(random-.5)*5}" r="${r+random*.8}" fill="${fill}"/>`;
+  if(state.rim==="coconut" && i%8===0) out+=`<path d="M${x-2} ${y-3} l4 5" stroke="#fff" stroke-width="1.2"/>`;
+  if(state.rim==="chocolate" && i%12===0) out+=`<circle cx="${x+1}" cy="${y+2}" r="2" fill="#9b6040"/>`;
+ }
+ return `<path d="M${x1} ${y1} H${x2}" stroke="${fill}" stroke-width="5" stroke-opacity=".4" stroke-linecap="round" fill="none"/>${out}`;
+}
+
+/* =========================
+   РЕНДЕР
+========================= */
+function render(){
+ const g=glasses[state.glass];
+ const svg=$("cocktail");
+
+ const clipPath=`<clipPath id="bowlClip"><path d="${g.inner}"/></clipPath>`;
+
+ let handle="";
+ if(g.handle){
+  handle=`
+   <path d="M218 145 H239 Q260 145 260 185 V260 Q260 285 218 285" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="9"/>
+   <path d="M221 155 H237 Q251 155 251 185 V255 Q251 274 221 275" fill="none" stroke="#fff" stroke-opacity=".15" stroke-width="4"/>
+  `;
+ }
+
+ let decorations="";
+ if(!g.noGarnish){
+  state.garnishes.forEach((item, index) => {
+    const isSelected = state.activeGarnishIndex === index;
+    const outline = isSelected ? `stroke="#9663ff" stroke-width="2" stroke-dasharray="4" fill="none"` : 'fill="none"';
+    
+    // Вычисляем позицию X для "надевания" на край.
+    // Если гарниров несколько, они распределяются вдоль верхней линии стакана.
+    let defaultX = g.top[0] + 25 + (index * 50); 
+    
+    // Немного опускаем по Y, чтобы кромка бокала перекрывала гарнир
+    let defaultY = g.top[1] - 10; 
+    
+    // Если пользователь еще не двигал гарнир (x/y совпадают с дефолтными при создании), 
+    // можно принудительно ставить его на край. Но так как мы уже задали x/y при клике, 
+    // мы просто используем сохраненные значения, но сдвигаем их повыше.
+    
+    decorations+=`
+      <g class="garnish-wrapper ${isSelected ? 'selected-garnish' : ''}" 
+         data-index="${index}"
+         transform="translate(${item.x} ${item.y}) rotate(-15) scale(${item.scale})"
+         style="cursor: move; pointer-events: all;">
+         ${getGarnishPath(item.id)}
+         <circle cx="20" cy="20" r="30" fill="transparent"/>
+         <circle cx="20" cy="20" r="30" ${outline} />
+      </g>
+    `;
+  });
+ }
+
+ let stem="";
+ if(g.stem){
+   stem += `
+    <!-- Рисуем ножку -->
+    <path d="${g.stem}" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="4" stroke-linecap="round"/>
+    <path d="${g.stem}" fill="none" stroke="rgba(255,255,255,.23)" stroke-width="1.2"/>
+   `;
+   // Рисуем основание (если оно есть)
+   if(g.base){
+     stem += `
+      <path d="${g.base}" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.6)" stroke-width="3" stroke-linejoin="round"/>
+      <path d="${g.base}" fill="none" stroke="rgba(255,255,255,.23)" stroke-width="1.2"/>
+     `;
+   }
+ }
+
+ // ВНИМАНИЕ: Теперь жидкость и пенка находятся внутри clip-path, 
+ // но мы убрали жесткую обрезку пены сверху, чтобы она не пропадала
+ svg.innerHTML=`
+ <defs>
+  ${clipPath}
+  <linearGradient id="liquid" x1="0" y1="0" x2="0" y2="1">
+   <stop offset="0" stop-color="${colorChange(state.color,35)}"/>
+   <stop offset=".5" stop-color="${state.color}"/>
+   <stop offset="1" stop-color="${colorChange(state.color,-25)}"/>
+  </linearGradient>
+  <linearGradient id="glass" x1="0" y1="0" x2="1" y2="0">
+   <stop offset="0" stop-color="#fff" stop-opacity=".35"/>
+   <stop offset=".12" stop-color="#fff" stop-opacity=".08"/>
+   <stop offset=".45" stop-color="#fff" stop-opacity=".02"/>
+   <stop offset=".8" stop-color="#fff" stop-opacity=".05"/>
+   <stop offset="1" stop-color="#fff" stop-opacity=".4"/>
+  </linearGradient>
+  <linearGradient id="ice" x1="0" y1="0" x2="1" y2="1">
+   <stop offset="0" stop-color="#fff" stop-opacity=".9"/>
+   <stop offset=".45" stop-color="#d9efff" stop-opacity=".5"/>
+   <stop offset="1" stop-color="#a2c9e7" stop-opacity=".3"/>
+  </linearGradient>
+ </defs>
+
+ ${stem}
+ ${handle}
+ <path d="${g.bowl}" fill="rgba(255,255,255,.035)"/>
+ <g clip-path="url(#bowlClip)">
+  ${liquidSVG(g)}
+  ${iceSVG(g)}
+ </g>
+ <path d="${g.bowl}" fill="url(#glass)" fill-opacity=".2" stroke="rgba(255,255,255,.85)" stroke-width="2.5" stroke-linejoin="round"/>
+ <path d="${g.inner}" fill="none" stroke="rgba(255,255,255,.17)" stroke-width="1.2"/>
+ <path d="${g.bowl}" fill="none" stroke="#fff" stroke-opacity=".16" stroke-width=".8"/>
+ ${rimSVG(g)}
+ ${decorations}
+ `;
+
+ $("iceControl").style.display=g.noIce?"none":"flex";
+ $("foamModifier").classList.toggle("hidden",!!g.noFoam);
+ $("layersModifier").classList.toggle("hidden",false);
+ $("garnishSection").style.display=g.noGarnish?"none":"block";
+
+ updateButtons();
+}
+
+/* =========================
+   ИНТЕРФЕЙС & ЛОГИКА
+========================= */
+function updateButtons(){
+ document.querySelectorAll(".glass-btn").forEach(b=>{ b.classList.toggle("active",b.dataset.id===state.glass); });
+ document.querySelectorAll(".color-btn").forEach(b=>{ b.classList.toggle("active",b.style.backgroundColor===rgb(state.color)); });
+ document.querySelectorAll(".choice").forEach(b=>{ b.classList.remove("active"); });
+
+ $("garnishInfo").textContent="Выбрано: "+state.garnishes.length;
+ $("iceToggle").checked=state.ice;
+ $("foamToggle").checked=state.foam;
+ $("layersToggle").checked=state.layers;
+ $("rimSelect").value=state.rim;
+ $("layerSettings").classList.toggle("hidden",!state.layers);
+
+ const editor = $("garnishEditor");
+ if (state.activeGarnishIndex >= 0 && state.garnishes[state.activeGarnishIndex]) {
+   editor.classList.add("active");
+   const currentScale = state.garnishes[state.activeGarnishIndex].scale;
+   $("garnishScale").value = currentScale;
+   $("garnishScaleVal").textContent = currentScale.toFixed(1) + "x";
+ } else {
+   editor.classList.remove("active");
+ }
+}
+
+function rgb(hex){
+ const n=parseInt(hex.slice(1),16);
+ return `rgb(${n>>16}, ${(n>>8)&255}, ${n&255})`;
+}
+
+function update(){
+  render();
+}
+
+/* =========================
+   ОПТИМИЗИРОВАННЫЙ DRAG & DROP
+========================= */
+let draggedItem = null;
+let dragIndex = -1;
+let startX, startY, initialX, initialY;
+let rafPending = false;
+
+function getSVGCoords(e) {
+  const svg = $("cocktail");
+  const rect = svg.getBoundingClientRect();
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+  return {
+    x: ((clientX - rect.left) / rect.width) * 320,
+    y: ((clientY - rect.top) / rect.height) * 420
+  };
+}
+
+function initDragAndDrop() {
+  const svg = $("cocktail");
+
+  svg.addEventListener("pointerdown", (e) => {
+    const wrapper = e.target.closest('.garnish-wrapper');
+    if (!wrapper) {
+      if (state.activeGarnishIndex !== -1) {
+        state.activeGarnishIndex = -1;
+        update();
+      }
+      return;
+    }
+
+    dragIndex = parseInt(wrapper.dataset.index);
+    state.activeGarnishIndex = dragIndex;
+    updateButtons();
+
+    draggedItem = state.garnishes[dragIndex];
+    const coords = getSVGCoords(e);
+    startX = coords.x;
+    startY = coords.y;
+    initialX = draggedItem.x;
+    initialY = draggedItem.y;
+
+    svg.setPointerCapture(e.pointerId);
+  });
+
+  svg.addEventListener("pointermove", (e) => {
+    if (!draggedItem) return;
+    e.preventDefault();
+    
+    const coords = getSVGCoords(e);
+    draggedItem.x = initialX + (coords.x - startX);
+    draggedItem.y = initialY + (coords.y - startY);
+
+    if (!rafPending) {
+      rafPending = true;
+      requestAnimationFrame(() => {
+        const wrapper = svg.querySelector(`.garnish-wrapper[data-index="${dragIndex}"]`);
+        if (wrapper) {
+          wrapper.setAttribute("transform", `translate(${draggedItem.x} ${draggedItem.y}) rotate(-15) scale(${draggedItem.scale})`);
+        }
+        rafPending = false;
+      });
+    }
+  });
+
+  svg.addEventListener("pointerup", (e) => {
+    if (!draggedItem) return;
+    draggedItem = null;
+    dragIndex = -1;
+    svg.releasePointerCapture(e.pointerId);
+  });
+}
+
+/* =========================
+   МАСШТАБ
+========================= */
+function setZoom(value){
+ state.zoom=Math.max(45,Math.min(140,Number(value)));
+ $("stage").style.transform=`scale(${state.zoom/100})`;
+ $("zoomSlider").value=state.zoom;
+ $("zoomValue").textContent=state.zoom+"%";
+}
+
+$("zoomSlider").oninput=e=>setZoom(e.target.value);
+$("zoomIn").onclick=()=>setZoom(state.zoom+10);
+$("zoomOut").onclick=()=>setZoom(state.zoom-10);
+
+/* =========================
+   УПРАВЛЕНИЕ РАЗМЕРОМ ГАРНИРА
+========================= */
+$("garnishScale").oninput = (e) => {
+  if (state.activeGarnishIndex >= 0) {
+    state.garnishes[state.activeGarnishIndex].scale = parseFloat(e.target.value);
+    $("garnishScaleVal").textContent = e.target.value + "x";
+    
+    const svg = $("cocktail");
+    const wrapper = svg.querySelector(`.garnish-wrapper[data-index="${state.activeGarnishIndex}"]`);
+    if (wrapper) {
+       const item = state.garnishes[state.activeGarnishIndex];
+       wrapper.setAttribute("transform", `translate(${item.x} ${item.y}) rotate(-15) scale(${item.scale})`);
+    }
+  }
+};
+
+$("deleteGarnish").onclick = () => {
+  if (state.activeGarnishIndex >= 0) {
+    state.garnishes.splice(state.activeGarnishIndex, 1);
+    state.activeGarnishIndex = -1;
+    update();
+  }
+};
+
+/* =========================
+   СКАЧИВАНИЕ PNG
+========================= */
+$("downloadBtn").onclick = () => {
+  const prevIndex = state.activeGarnishIndex;
+  state.activeGarnishIndex = -1;
+  render();
+
+  const svg = $("cocktail");
+  const svgString = new XMLSerializer().serializeToString(svg);
+  
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  const scaleFactor = 2; 
+  canvas.width = 640 * scaleFactor;  
+  canvas.height = 840 * scaleFactor;
+  
+  ctx.fillStyle = "#101015";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const img = new Image();
+  const svgBlob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
+  const url = URL.createObjectURL(svgBlob);
+
+  img.onload = () => {
+    const zoomMultiplier = state.zoom / 100;
+    const drawWidth = canvas.width * zoomMultiplier;
+    const drawHeight = canvas.height * zoomMultiplier;
+    const offsetX = (canvas.width - drawWidth) / 2;
+    const offsetY = (canvas.height - drawHeight) / 2;
+
+    ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+    URL.revokeObjectURL(url);
+    
+    const a = document.createElement("a");
+    a.download = `cocktail-${state.glass}.png`;
+    a.href = canvas.toDataURL("image/png");
+    a.click();
+
+    state.activeGarnishIndex = prevIndex;
+    render();
+  };
+  img.src = url;
+};
+
+/* =========================
+   СБРОС
+========================= */
+$("reset").onclick=()=>{
+ state.glass="rocks";
+ state.color="#dca16c";
+ state.garnishes=[];
+ state.ice=true;
+ state.foam=false;
+ state.layers=false;
+ state.rim="none";
+ state.layerColors=["#54271c","#d9a04b","#f1dfb0"];
+ state.activeGarnishIndex = -1;
+
+ $("layer1").value=state.layerColors[0];
+ $("layer2").value=state.layerColors[1];
+ $("layer3").value=state.layerColors[2];
+
+ $("layerSettings").classList.add("hidden");
+ setZoom(100);
+ update();
+};
+
+initDragAndDrop();
+update();
+</script>
+</body>
+</html>
