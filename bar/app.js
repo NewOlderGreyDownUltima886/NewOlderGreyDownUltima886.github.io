@@ -340,13 +340,13 @@ const app = {
         oldfashioned: { name:"Олд Фэшн", icon:"M3 5 H21 V21 H3 Z", bowl:"M65 130 H255 V345 Q255 355 245 355 H75 Q65 355 65 345 Z", inner:"M73 137 H247 V340 Q247 347 238 347 H82 Q73 347 73 340 Z", top:[65,130,255,130], clip:[73,137,174,205], garnish:[85,130] },
         highball: { name:"Хайбол", icon:"M5 2 H19 L18 22 H6 Z", bowl:"M85 70 H235 L225 350 H95 Z", inner:"M93 77 H227 L218 343 H102 Z", top:[85,70,235,70], clip:[93,77,134,260], garnish:[100,70] },
         halfhighball: { 
-            name:"Полу-хайбол", icon:"M5 7 H19 L18 22 H6 Z", 
-            // Уменьшили высоту (с 70 до 150)
-            bowl:"M85 150 H235 L225 350 H95 Z", 
-            inner:"M93 157 H227 L218 343 H102 Z", 
-            top:[85,150,235,150], 
-            clip:[93,157,134,180], 
-            garnish:[100,150] 
+            name:"Полу-хайбол", icon:"M5 5 H19 L18 22 H6 Z", 
+            // Верхняя граница на y=100 (между 70 и 130)
+            bowl:"M85 100 H235 L225 350 H95 Z", 
+            inner:"M93 107 H227 L218 343 H102 Z", 
+            top:[85,100,235,100], 
+            clip:[93,107,134,225], // Зона для льда тоже стала выше
+            garnish:[100,100] 
         },
         sling: { name:"Слинг", icon:"M5 2 H19 L15 15 L12 19 L9 15 Z", bowl:"M65 60 H255 L160 320 L220 345 H100 L160 320 Z", inner:"M75 68 H245 L160 310 Z", top:[65,60,255,60], clip:[75,68,170,242], garnish:[85,60] },
         martini: { name:"Мартини", icon:"M3 3 H21 L12 14 Z M12 14 V22 M7 22 H17", bowl:"M65 65 H255 L160 215 Z", inner:"M74 72 H246 L160 202 Z", top:[65,65,255,65], clip:[74,72,172,135], garnish:[80,65], stem:"M160 215 V350 M110 350 Q160 357 210 350" },
@@ -481,7 +481,29 @@ const app = {
     },
 
     getLiquidSVG(g, vs, liquidId) {
-        let out = `<rect width="320" height="420" fill="url(#${liquidId})"/>`;
+        let out = "";
+        
+        // СЛОИ (для шотов)
+        if (vs.layers) {
+            // Для Шота: область жидкости от 165 до 350 (высота 185).
+            // Делим на 3 равные части по ~62 пикселя.
+            out += `
+                <!-- Нижний слой -->
+                <rect x="0" y="288" width="320" height="62" fill="${vs.layerColors[0]}"/>
+                <!-- Средний слой -->
+                <rect x="0" y="226" width="320" height="62" fill="${vs.layerColors[1]}"/>
+                <!-- Верхний слой -->
+                <rect x="0" y="164" width="320" height="62" fill="${vs.layerColors[2]}"/>
+                
+                <!-- Линии разделения для красоты -->
+                <path d="M0 226 H320 M0 288 H320" stroke="#ffffff" stroke-opacity=".25" stroke-width="1.5"/>
+            `;
+        } else {
+            // Обычная заливка
+            out += `<rect width="320" height="420" fill="url(#${liquidId})"/>`;
+        }
+
+        // Пенка
         if (vs.foam && !g.noFoam) {
             const topY = g.top[1];
             let foamHTML = `<rect x="0" y="${topY}" width="320" height="15" fill="#fffcf5"/>`;
@@ -494,6 +516,7 @@ const app = {
         }
         return out;
     },
+
 
     getIceSVG(g, vs, iceId) {
         if (!vs.ice || g.noIce) return "";
@@ -542,18 +565,40 @@ const app = {
         if(this.isEditorOpen) this.initVisualEditorUI();
     },
 
-    // Замените initVisualEditorUI (добавил rim и zoom)
+
+    toggleLayers(isChecked) {
+        this.visual.layers = isChecked;
+        document.getElementById('v-layerSettings').style.display = isChecked ? 'flex' : 'none';
+        
+        // Если включаем слои впервые, зададим дефолтные цвета
+        if (isChecked && (!this.visual.layerColors || this.visual.layerColors.length === 0)) {
+            this.visual.layerColors = ["#54271c", "#d9a04b", "#f1dfb0"];
+            document.getElementById('v-layer1').value = this.visual.layerColors[0];
+            document.getElementById('v-layer2').value = this.visual.layerColors[1];
+            document.getElementById('v-layer3').value = this.visual.layerColors[2];
+        }
+        this.renderVisual();
+    },
+
+    updateLayerColor(index, color) {
+        if (!this.visual.layerColors) this.visual.layerColors = ["#54271c", "#d9a04b", "#f1dfb0"];
+        this.visual.layerColors[index] = color;
+        this.renderVisual();
+    },
+
+
     initVisualEditorUI() {
+        // 1. Посуда
         document.getElementById('v-glassPicker').innerHTML = Object.entries(this.glasses).map(([id, g]) => `
             <button class="v-btn ${this.visual.glass === id ? 'active' : ''}" onclick="app.updateVisual('glass', '${id}'); app.initVisualEditorUI();">${g.name}</button>
         `).join('');
 
+        // 2. Цвета (с добавлением кастомного)
         const colors = ["#f6d15a","#e75b5b","#58a9e8","#8bdb70","#592b1c","#dca16c","#eee9df","#b47ce0","#ef8b38","#c94f91","#4dc9b2","#6074cc"];
         let colorsHTML = colors.map(c => `
             <div class="v-color ${this.visual.color === c ? 'active' : ''}" style="background:${c}" onclick="app.updateVisual('color', '${c}'); app.initVisualEditorUI();"></div>
         `).join('');
         
-        // Добавляем кнопку "Свой цвет" (Color Picker)
         colorsHTML += `
             <div class="v-color-custom ${!colors.includes(this.visual.color) ? 'active' : ''}" style="position: relative; overflow: hidden; border-radius: 50%; width: 36px; height: 36px; border: 2px solid white; background: ${colors.includes(this.visual.color) ? 'transparent' : this.visual.color}; display: flex; justify-content: center; align-items: center; cursor: pointer;">
                 <input type="color" value="${this.visual.color}" style="position: absolute; width: 200%; height: 200%; opacity: 0; cursor: pointer;" oninput="app.updateVisual('color', this.value); app.initVisualEditorUI();">
@@ -562,16 +607,33 @@ const app = {
         `;
         document.getElementById('v-colorPicker').innerHTML = colorsHTML;
 
+        // 3. Гарниры
         const garnishes = { lemon:"Лимон", lime:"Лайм", orange:"Апельсин", straw:"Трубочка", bamboo:"Бамбук", flag:"Флажок", oreo:"Oreo" };
         document.getElementById('v-garnishPicker').innerHTML = Object.entries(garnishes).map(([id, name]) => {
             const has = this.visual.garnishes.some(g => g.id === id);
             return `<button class="v-btn ${has ? 'active' : ''}" onclick="app.toggleGarnish('${id}')">${name}</button>`;
         }).join('');
 
+        // 4. Чекбоксы (Лёд, Пенка, Слои)
         document.getElementById('v-iceToggle').checked = this.visual.ice;
         document.getElementById('v-foamToggle').checked = this.visual.foam;
         document.getElementById('v-rimSelect').value = this.visual.rim || 'none';
         document.getElementById('v-zoomSlider').value = this.visual.zoom || 100;
+
+        // Восстанавливаем UI для слоев, если они были включены
+        const layersToggle = document.getElementById('v-layersToggle');
+        const layerSettings = document.getElementById('v-layerSettings');
+        
+        if (layersToggle && layerSettings) {
+            layersToggle.checked = this.visual.layers || false;
+            layerSettings.style.display = this.visual.layers ? 'block' : 'none';
+            
+            if (this.visual.layers) {
+                document.getElementById('v-layer1').value = this.visual.layerColors[0];
+                document.getElementById('v-layer2').value = this.visual.layerColors[1];
+                document.getElementById('v-layer3').value = this.visual.layerColors[2];
+            }
+        }
     },
 
     updateVisual(key, value) {
