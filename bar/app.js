@@ -37,6 +37,14 @@ const app = {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
         document.getElementById(`view-${viewId}`).classList.add('active');
 
+        // СБРОС РЕДАКТОРА ПРИ УХОДЕ С ЭКРАНА
+        if (viewId !== 'detail') {
+            const panel = document.getElementById('visualEditorPanel');
+            if (panel) panel.classList.remove('active');
+            this.isEditorOpen = false;
+            this.activeGarnishIndex = -1;
+        }
+
         if (viewId === 'home') {
             const searchInput = document.getElementById('search-input');
             if (searchInput) searchInput.value = '';
@@ -55,6 +63,12 @@ const app = {
     goHome() { this.showView('home'); },
 
     goBack() {
+        // СБРОС РЕДАКТОРА ПРИ ВОЗВРАТЕ
+        const panel = document.getElementById('visualEditorPanel');
+        if (panel) panel.classList.remove('active');
+        this.isEditorOpen = false;
+        this.activeGarnishIndex = -1;
+
         if (this.history.length > 0) this.showView(this.history.pop());
         else this.showView('home');
     },
