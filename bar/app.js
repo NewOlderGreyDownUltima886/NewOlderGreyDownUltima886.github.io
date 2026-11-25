@@ -8,6 +8,7 @@ const app = {
     startX: 0, startY: 0, initialX: 0, initialY: 0,
     isDragging: false,
     isEditorOpen: false,
+    pendingSwipeDirection: null,
 
     init() {
         this.loadData();
@@ -21,6 +22,7 @@ const app = {
                 if (index !== -1) menuData[index] = savedDrink;
             });
         }
+        this.setupHistory();
         this.setupSwipe();
     },
 
@@ -33,49 +35,153 @@ const app = {
         this.renderFavorites();
     },
 
-    showView(viewId) {
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    showView(viewId, addHistory = true) {
+        document.querySelectorAll('.view').forEach(v =>
+            v.classList.remove('active')
+        );
+
         document.getElementById(`view-${viewId}`).classList.add('active');
 
-        // СБРОС РЕДАКТОРА ПРИ УХОДЕ С ЭКРАНА
+        // --- СБРОС РЕДАКТОРА ПРИ УХОДЕ С ЭКРАНА ---
         if (viewId !== 'detail') {
             const panel = document.getElementById('visualEditorPanel');
             if (panel) panel.classList.remove('active');
             this.isEditorOpen = false;
             this.activeGarnishIndex = -1;
+            const tools = document.getElementById('garnishTools');
+            if (tools) tools.style.display = 'none';
         }
 
         if (viewId === 'home') {
             const searchInput = document.getElementById('search-input');
-            if (searchInput) searchInput.value = '';
-            const catList = document.getElementById('category-list');
-            if (catList) catList.style.display = 'flex'; 
-            const searchRes = document.getElementById('search-results');
-            if (searchRes) searchRes.style.display = 'none';
+            const query = searchInput ? searchInput.value : '';
+            this.handleSearch(query);
+        } else if (addHistory) {
+            window.history.pushState(
+                { ttkApp: true, view: viewId },
+                ''
+            );
         }
 
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        if(viewId === 'home') document.querySelectorAll('.nav-item')[0].classList.add('active');
-        if(viewId === 'favorites') document.querySelectorAll('.nav-item')[1].classList.add('active');
-        window.scrollTo(0, 0);
+        document.querySelectorAll('.nav-item').forEach(n =>
+            n.classList.remove('active')
+        );
+
+        if (viewId === 'home')
+            document.querySelectorAll('.nav-item')[0].classList.add('active');
+
+        if (viewId === 'favorites')
+            document.querySelectorAll('.nav-item')[1].classList.add('active');
+
+        if (viewId === 'home') {
+            requestAnimationFrame(() => {
+                window.scrollTo(0, this.savedHomeScroll);
+            });
+        } else {
+            window.scrollTo(0, 0);
+        }
     },
 
-    goHome() { this.showView('home'); },
 
-    goBack() {
-        // СБРОС РЕДАКТОРА ПРИ ВОЗВРАТЕ
+    goHome() {
+        const homeView = document.getElementById('view-home');
+
+        // Если уже на главной — очищаем поиск
+        if (homeView.classList.contains('active')) {
+            const input = document.getElementById('search-input');
+
+            if (input && input.value.trim() !== '') {
+                input.value = '';
+                this.handleSearch('');
+                this.savedHomeScroll = 0;
+                window.scrollTo(0, 0);
+            }
+
+            return;
+        }
+
+        // Если на другом экране — возвращаемся на главную
+        this.showView('home');
+    },
+
+
+    setupHistory() {
+        if (!window.history.state?.ttkApp) {
+            window.history.replaceState(
+                { ttkApp: true, view: 'home' },
+                ''
+            );
+        }
+
+        window.addEventListener('popstate', (event) => {
+            const activeView = document.querySelector('.view.active');
+
+            if (!activeView || activeView.id === 'view-home') return;
+
+            this.goBack(
+                true,
+                true,
+                this.pendingSwipeDirection || 'right'
+            );
+
+            this.pendingSwipeDirection = null;
+        });
+    },
+
+
+    goBack(animate = true, fromPopState = false, direction = 'right') {
+        const activeView = document.querySelector('.view.active');
+
+        if (!activeView || activeView.id === 'view-home') return;
+
+        // Если это свайп или вызов кнопки — ждём popstate
+        if (!fromPopState) {
+            this.pendingSwipeDirection = direction;
+
+            if (window.history.state?.ttkApp) {
+                window.history.back();
+                return;
+            }
+        }
+
+        // --- СБРОС РЕДАКТОРА ПРИ ВОЗВРАТЕ ---
         const panel = document.getElementById('visualEditorPanel');
         if (panel) panel.classList.remove('active');
         this.isEditorOpen = false;
         this.activeGarnishIndex = -1;
+        const tools = document.getElementById('garnishTools');
+        if (tools) tools.style.display = 'none';
 
-        if (this.history.length > 0) this.showView(this.history.pop());
-        else this.showView('home');
+        // Определяем предыдущий экран
+        const nextViewId = this.history.length > 0
+            ? this.history.pop()
+            : 'home';
+
+        const outgoingView = activeView;
+
+        // Показываем предыдущий экран
+        this.showView(nextViewId, false);
+
+        if (animate) {
+            const animationClass = direction === 'left'
+                ? 'swipe-out-left'
+                : 'swipe-out-right';
+
+            outgoingView.classList.add(animationClass);
+
+            setTimeout(() => {
+                outgoingView.classList.remove(
+                    'swipe-out-left',
+                    'swipe-out-right'
+                );
+            }, 200);
+        }
+
+        this.pendingSwipeDirection = null;
     },
-
     setupSwipe() {
 
-        // return;
+        return;
 
         let startX = 0, startY = 0, isSwiping = false;
         document.addEventListener('touchstart', (e) => {
