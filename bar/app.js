@@ -60,6 +60,9 @@ const app = {
     },
 
     setupSwipe() {
+
+        return;
+
         let startX = 0, startY = 0, isSwiping = false;
         document.addEventListener('touchstart', (e) => {
             const activeView = document.querySelector('.view.active');
