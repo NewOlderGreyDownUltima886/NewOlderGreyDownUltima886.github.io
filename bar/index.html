@@ -12,127 +12,110 @@
 <body>
 
     <main class="views-container">
-
     <!-- Экран 1: Главная -->
     <div id="view-home" class="view active">
         <header>
             <h1>Коктейли</h1>
-            <p>ТТК • Рецепты • Фото</p>
+            <p>ТТК • Рецепты • Генератор</p>
         </header>
-        
-        <!-- НОВЫЙ БЛОК ПОИСКА -->
         <div class="search-container">
-            <input 
-    type="text" 
-    id="search-input" 
-    placeholder="Поиск по названию..." 
-    oninput="app.handleSearch(this.value)"
-    onkeydown="if(event.key === 'Enter') this.blur();"
-    autocomplete="off" 
-    autocorrect="off" 
-    autocapitalize="off" 
-    spellcheck="false"
-    name="cocktail_search"
-    enterkeyhint="search"
->
-            <button
-                type="button"
-                class="search-clear"
-                onclick="app.clearSearch()"
-            >×</button>
+            <input type="text" id="search-input" placeholder="Поиск по названию или ингредиенту..." oninput="app.handleSearch(this.value)" onkeydown="if(event.key === 'Enter') this.blur();" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="cocktail_search" enterkeyhint="search">
+            <button type="button" class="search-clear" onclick="app.clearSearch()">×</button>
         </div>
-
-        <!-- Блок категорий (скроется, когда начнется поиск) -->
-        <div class="category-list" id="category-list">
-            <!-- Категории подтянутся из JS -->
-        </div>
-
-        <!-- Блок результатов поиска (появится при вводе) -->
-        <div class="drink-grid" id="search-results" style="display: none;">
-            <!-- Результаты поиска подтянутся из JS -->
-        </div>
+        <div class="category-list" id="category-list"></div>
+        <div class="drink-grid" id="search-results" style="display: none;"></div>
     </div>
 
     <!-- Экран 2: Список напитков в категории -->
     <div id="view-category" class="view">
         <header class="nav-header">
-            <!-- <button class="back-btn" onclick="app.showView('home')">←</button> -->
             <h2 id="category-title">Категория</h2>
         </header>
-        <div class="drink-grid" id="drink-grid">
-            <!-- Карточки напитков подтянутся из JS -->
-        </div>
+        <div class="drink-grid" id="drink-grid"></div>
     </div>
 
     <!-- Экран 3: Детали напитка -->
     <div id="view-detail" class="view">
         <div class="detail-hero">
-            <img id="detail-image" src="" alt="Напиток">
-            <!-- <button class="back-btn floating" onclick="app.goBack()">←</button> -->
-            
-            <!-- Кнопка загрузки фото (для режима редактирования) -->
-            <label id="upload-label" class="upload-btn hidden">
-                📷 Сменить фото
-                <input type="file" id="image-upload" accept="image/*" onchange="app.handleImageUpload(event)">
-            </label>
+            <div class="generator-preview" id="generator-preview"></div>
+            <button class="back-btn floating" onclick="app.goBack()">←</button>
+            <button class="edit-visual-btn" onclick="app.toggleVisualEditor()">🎨 Настроить</button>
         </div>
         
         <div class="detail-content">
             <div class="detail-header">
                 <h2 id="detail-name">Название</h2>
             </div>
-            <!-- <button id="edit-btn" onclick="app.toggleEdit()">Изменить</button> -->
             <div class="tags">
                 <span class="tag" id="detail-glass">Шот</span>
                 <span class="tag" id="detail-method">Метод</span>
             </div>
-
             <h3>Состав</h3>
-            <ul class="ingredients-list" id="ingredients-list">
-                <!-- Ингредиенты подтянутся из JS -->
-            </ul>
+            <ul class="ingredients-list" id="ingredients-list"></ul>
+            <button id="fav-btn" class="main-btn" onclick="app.toggleFavorite()">♡ Сохранить в избранное</button>
+        </div>
 
-            <button id="fav-btn" class="main-btn" onclick="app.toggleFavorite()">
-                ♡ Сохранить в избранное
-            </button>
+        <!-- Выезжающая панель редактирования -->
+        <div class="visual-editor-panel" id="visualEditorPanel">
+            <div class="editor-header">
+                <h3>Настройка вида</h3>
+                <button class="close-editor" onclick="app.toggleVisualEditor()">✕</button>
+            </div>
+            <div class="editor-scroll">
+                <div class="section-title">Посуда</div>
+                <div class="v-grid" id="v-glassPicker"></div>
+                
+                <div class="section-title">Цвет жидкости</div>
+                <div class="v-colors" id="v-colorPicker"></div>
+
+                <div class="section-title">Гарнир</div>
+                <div class="v-grid" id="v-garnishPicker"></div>
+
+                <div class="section-title">Модификаторы</div>
+                <div class="v-modifiers">
+                    <label><input type="checkbox" id="v-iceToggle" onchange="app.updateVisual('ice', this.checked)"> Лёд</label>
+                    <label><input type="checkbox" id="v-foamToggle" onchange="app.updateVisual('foam', this.checked)"> Пенка</label>
+                </div>
+                
+                <div class="section-title" style="margin-top: 15px;">Окантовка</div>
+                <select id="v-rimSelect" class="v-select" onchange="app.updateVisual('rim', this.value)">
+                    <option value="none">Без покрытия</option>
+                    <option value="salt">Соль</option>
+                    <option value="coconut">Кокосовая стружка</option>
+                    <option value="chocolate">Шоколад</option>
+                </select>
+
+                <div class="section-title" style="margin-top: 15px;">Масштаб превью</div>
+                <input type="range" id="v-zoomSlider" min="50" max="150" value="100" style="width: 100%; accent-color: var(--accent);" oninput="app.updateVisual('zoom', this.value)">
+                
+                <button class="save-visual-btn" onclick="app.saveVisualState()">💾 Сохранить для этого коктейля</button>
+                
+                <div class="data-actions">
+                    <button class="export-btn" onclick="app.exportData()">📤 Экспорт</button>
+                    <label class="import-btn">📥 Импорт<input type="file" accept=".json" onchange="app.importData(event)"></label>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Экран 4: Избранное -->
     <div id="view-favorites" class="view">
-        <header>
-            <h1>Избранное</h1>
-        </header>
-        <div class="drink-grid" id="favorites-grid">
-            <!-- Избранные напитки подтянутся из JS -->
-        </div>
+        <header><h1>Избранное</h1></header>
+        <div class="drink-grid" id="favorites-grid"></div>
     </div>
-
     </main>
 
-    <!-- Нижнее меню (Навигация) -->
     <nav class="bottom-nav">
         <button onclick="app.goHome()" class="nav-item active">🏠<br>Главная</button>
         <button onclick="app.showView('favorites')" class="nav-item">⭐<br>Избранное</button>
     </nav>
 
-    <button id="install" class="install-btn" hidden>
-        Установить приложение
-    </button>
-
-    <!-- Подключаем сначала данные, потом логику -->
     <script src="data.js"></script>
     <script src="app.js"></script>
 </body>
-
 <script>
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            // Регистрируем SW относительно текущей папки (./)
-            navigator.serviceWorker.register('./sw.js', { scope: './' });
-        });
+        window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js', { scope: './' }));
     }
 </script>
-
-
 </html>
