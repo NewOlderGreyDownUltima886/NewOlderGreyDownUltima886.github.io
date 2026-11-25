@@ -23,16 +23,18 @@
         <!-- НОВЫЙ БЛОК ПОИСКА -->
         <div class="search-container">
             <input 
-                type="text" 
-                id="search-input" 
-                placeholder="Поиск по названию..." 
-                oninput="app.handleSearch(this.value)"
-                autocomplete="off" 
-                autocorrect="off" 
-                autocapitalize="off" 
-                spellcheck="false"
-                name="cocktail_search"
-            >
+    type="text" 
+    id="search-input" 
+    placeholder="Поиск по названию..." 
+    oninput="app.handleSearch(this.value)"
+    onkeydown="if(event.key === 'Enter') this.blur();"
+    autocomplete="off" 
+    autocorrect="off" 
+    autocapitalize="off" 
+    spellcheck="false"
+    name="cocktail_search"
+    enterkeyhint="search"
+>
             <button
                 type="button"
                 class="search-clear"
@@ -78,9 +80,8 @@
         <div class="detail-content">
             <div class="detail-header">
                 <h2 id="detail-name">Название</h2>
-                <button id="edit-btn" onclick="app.toggleEdit()">✏️</button>
             </div>
-            
+            <!-- <button id="edit-btn" onclick="app.toggleEdit()">Изменить</button> -->
             <div class="tags">
                 <span class="tag" id="detail-glass">Шот</span>
                 <span class="tag" id="detail-method">Метод</span>
@@ -111,7 +112,7 @@
 
     <!-- Нижнее меню (Навигация) -->
     <nav class="bottom-nav">
-        <button onclick="app.showView('home')" class="nav-item active">🏠<br>Главная</button>
+        <button onclick="app.goHome()" class="nav-item active">🏠<br>Главная</button>
         <button onclick="app.showView('favorites')" class="nav-item">⭐<br>Избранное</button>
     </nav>
 

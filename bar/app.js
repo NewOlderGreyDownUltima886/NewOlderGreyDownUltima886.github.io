@@ -5,23 +5,37 @@ const app = {
     pendingSwipeDirection: null,
     savedHomeScroll: 0,
     
+
     init() {
         this.loadData();
+
+        const savedData = localStorage.getItem('ttk_menu_data');
+
+        if (savedData) {
+            try {
+                const parsed = JSON.parse(savedData);
+
+                parsed.forEach(savedDrink => {
+                    const index = menuData.findIndex(
+                        d => d.id === savedDrink.id
+                    );
+
+                    if (index !== -1) {
+                        menuData[index] = savedDrink;
+                    }
+                });
+            } catch (error) {
+                console.error('Ошибка загрузки сохранённых данных:', error);
+            }
+        }
+
         this.renderCategories();
         this.renderFavorites();
-        
-        const savedData = localStorage.getItem('ttk_menu_data');
-        if (savedData) {
-            const parsed = JSON.parse(savedData);
-            parsed.forEach(savedDrink => {
-                const index = menuData.findIndex(d => d.id === savedDrink.id);
-                if (index !== -1) menuData[index] = savedDrink;
-            });
-        }
 
         this.setupHistory();
         this.setupSwipe();
     },
+
 
     setupHistory() {
         if (!window.history.state?.ttkApp) {
@@ -53,6 +67,26 @@ const app = {
         input.focus();
     },
 
+    goHome() {
+        const homeView = document.getElementById('view-home');
+
+        // Если уже на главной — очищаем поиск
+        if (homeView.classList.contains('active')) {
+            const input = document.getElementById('search-input');
+
+            if (input && input.value.trim() !== '') {
+                input.value = '';
+                this.handleSearch('');
+                this.savedHomeScroll = 0;
+                window.scrollTo(0, 0);
+            }
+
+            return;
+        }
+
+        // Если на другом экране — возвращаемся на главную
+        this.showView('home');
+    },
 
     setupSwipe() {
         let startX = 0;
@@ -340,7 +374,7 @@ goBack(animate = true, fromPopState = false, direction = 'right') {
         favBtn.className = isFav ? 'main-btn saved' : 'main-btn';
         favBtn.style.display = this.isEditing ? 'none' : 'block';
 
-        document.getElementById('edit-btn').textContent = this.isEditing ? '💾 Сохранить' : '✏️';
+        // document.getElementById('edit-btn').textContent = this.isEditing ? '💾 Сохранить' : '✏️';
         document.getElementById('upload-label').classList.toggle('hidden', !this.isEditing);
     },
 
@@ -389,18 +423,74 @@ goBack(animate = true, fromPopState = false, direction = 'right') {
         drink.ingredients[index][field] = value;
     },
 
-    handleImageUpload(event) {
+
+    async handleImageUpload(event) {
         const file = event.target.files[0];
         if (!file) return;
 
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const drink = menuData.find(d => d.id === this.currentDrinkId);
-            drink.image = e.target.result; 
-            this.renderDetail();
-        };
-        reader.readAsDataURL(file);
+        if (!file.type.startsWith('image/')) {
+            alert('Выбери файл изображения');
+            return;
+        }
+
+        try {
+            const bitmap = await createImageBitmap(file);
+
+            const maxSize = 1400;
+            const scale = Math.min(
+                1,
+                maxSize / Math.max(bitmap.width, bitmap.height)
+            );
+
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.round(bitmap.width * scale);
+            canvas.height = Math.round(bitmap.height * scale);
+
+            const context = canvas.getContext('2d');
+
+            // Белый фон для корректного сохранения в JPEG
+            context.fillStyle = '#ffffff';
+            context.fillRect(0, 0, canvas.width, canvas.height);
+
+            context.drawImage(
+                bitmap,
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
+
+            bitmap.close();
+
+            const blob = await new Promise(resolve => {
+                canvas.toBlob(resolve, 'image/jpeg', 0.78);
+            });
+
+            if (!blob) throw new Error('Не удалось сжать изображение');
+
+            const reader = new FileReader();
+
+            reader.onload = () => {
+                const drink = menuData.find(
+                    d => d.id === this.currentDrinkId
+                );
+
+                if (!drink) return;
+
+                drink.image = reader.result;
+                this.renderDetail();
+            };
+
+            reader.readAsDataURL(blob);
+
+        } catch (error) {
+            console.error('Ошибка обработки изображения:', error);
+            alert('Не удалось обработать фотографию. Попробуй другое изображение.');
+        }
+
+        event.target.value = '';
     }
+
 };
 
 

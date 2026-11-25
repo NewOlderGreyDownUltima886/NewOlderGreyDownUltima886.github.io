@@ -4,19 +4,28 @@
 const categories = [
     // Из листа "Б_А коктейли, Шоты"
     { id: 'shots', name: 'Шоты забористые', desc: 'Крепкие и яркие' },
-    { id: 'tea', name: 'Чай', desc: 'Согревающие и авторские' },
-    { id: 'lemonades', name: 'Лимонады', desc: 'Освежающие миксы' },
-    { id: 'milkshakes', name: 'Милкшейки', desc: 'Сладкие и густые' },
-    { id: 'cold-tea', name: 'Холодные чаи', desc: 'Освежающие шейки' },
     
     // Из листа "Коктейли по ГОСТу"
-    { id: 'gost', name: 'Коктейли по ГОСТу', desc: 'Классика жанра' },
+    { id: 'gost', name: 'Коктейли по ГОСТу', desc: 'Барменская классика' },
     
     // Из листа "Молодежная Запрещёнка"
     { id: 'youth', name: 'Молодежная Запрещёнка', desc: 'Бунтарские миксы' },
     
     // Из листа "Коктейли Буржуйские"
-    { id: 'premium', name: 'Коктейли Буржуйские', desc: 'Премиум-класс' }
+    { id: 'premium', name: 'Коктейли Буржуйские', desc: 'Премиум-класс' },
+
+    { id: 'lemonades', name: 'Лимонады', desc: 'Освежающие миксы' },
+
+    { id: 'milkshakes', name: 'Милкшейки', desc: 'Сладкие и густые' },
+
+    { id: 'tea', name: 'Чай', desc: 'Согревающие и холодные чаи' },
+
+    { id: 'special', name: 'Для сильных духом!', desc: 'Спец подача' }
+
+
+    // { id: 'cold-tea', name: 'Холодные чаи', desc: 'Освежающие шейки' },
+    
+
 ];
 
 const menuData = [
@@ -177,6 +186,37 @@ const menuData = [
         ]
     },
 
+        {
+        id: 'cold-cranberry',
+        category: 'tea',
+        name: 'Брусника-Клюква',
+        image: 'https://avatars.mds.yandex.net/get-mpic/4012682/2a0000018e102c252102d0e32b14b5cb8112/orig',
+        method: 'Шейк',
+        glass: 'Хайбол',
+        ingredients: [
+            { name: 'Основа брусника-клюква', amount: '30', unit: 'мл' },
+            { name: 'Супер Джус', amount: '15', unit: 'мл' },
+            { name: 'Сахарный сироп', amount: '15', unit: 'мл' },
+            { name: 'Завар чая «Ассам»', amount: '120', unit: 'мл' },
+            { name: 'Газ вода', amount: 'топ ап', unit: '' }
+        ]
+    },
+    {
+        id: 'cold-mint-lime',
+        category: 'tea',
+        name: 'Мята-Лайм',
+        image: 'https://avatars.mds.yandex.net/get-mpic/4012682/2a0000018e102c252102d0e32b14b5cb8112/orig',
+        method: 'Шейк',
+        glass: 'Хайбол',
+        ingredients: [
+            { name: 'Основа мята-лайм', amount: '30', unit: 'мл' },
+            { name: 'Супер Джус', amount: '15', unit: 'мл' },
+            { name: 'Сахарный сироп', amount: '15', unit: 'мл' },
+            { name: 'Завар чая «Ассам»', amount: '120', unit: 'мл' },
+            { name: 'Газ вода', amount: 'топ ап', unit: '' }
+        ]
+    },
+
     // ================= ЛИМОНАДЫ =================
     {
         id: 'strawberry-basil',
@@ -264,38 +304,6 @@ const menuData = [
             { name: 'сироп брауни', amount: '15', unit: 'мл' },
             { name: 'топинг шоколад', amount: '15', unit: 'мл' },
             { name: 'взбитые сливки', amount: '30', unit: 'мл' }
-        ]
-    },
-
-    // ================= ХОЛОДНЫЕ ЧАИ =================
-    {
-        id: 'cold-cranberry',
-        category: 'cold-tea',
-        name: 'Брусника-Клюква',
-        image: 'https://avatars.mds.yandex.net/get-mpic/4012682/2a0000018e102c252102d0e32b14b5cb8112/orig',
-        method: 'Шейк',
-        glass: 'Хайбол',
-        ingredients: [
-            { name: 'Основа брусника-клюква', amount: '30', unit: 'мл' },
-            { name: 'Супер Джус', amount: '15', unit: 'мл' },
-            { name: 'Сахарный сироп', amount: '15', unit: 'мл' },
-            { name: 'Завар чая «Ассам»', amount: '120', unit: 'мл' },
-            { name: 'Газ вода', amount: 'топ ап', unit: '' }
-        ]
-    },
-    {
-        id: 'cold-mint-lime',
-        category: 'cold-tea',
-        name: 'Мята-Лайм',
-        image: 'https://avatars.mds.yandex.net/get-mpic/4012682/2a0000018e102c252102d0e32b14b5cb8112/orig',
-        method: 'Шейк',
-        glass: 'Хайбол',
-        ingredients: [
-            { name: 'Основа мята-лайм', amount: '30', unit: 'мл' },
-            { name: 'Супер Джус', amount: '15', unit: 'мл' },
-            { name: 'Сахарный сироп', amount: '15', unit: 'мл' },
-            { name: 'Завар чая «Ассам»', amount: '120', unit: 'мл' },
-            { name: 'Газ вода', amount: 'топ ап', unit: '' }
         ]
     },
 
@@ -676,6 +684,21 @@ const menuData = [
             { name: 'Ягода с/м "Клубника"', amount: '15', unit: 'гр' },
             { name: 'Фрукты свежие "Ананас"', amount: '50', unit: 'гр' },
             { name: 'Специи стружка кокосовая', amount: '1', unit: 'гр' }
+        ]
+    },
+
+    {
+        id: 'kaska-tekila-bum',
+        category: 'special',
+        name: 'Текила в каску Бум',
+        image: 'https://images.gastronom.ru/q1jzVWmdNqrI3aSb7Vh07B8UxgvgnY9yMzuqTDtdt-g/pr:recipe-cover-image/g:ce/rs:auto:0:0:0/L2Ntcy9hbGwtaW1hZ2VzL2MyNWY4NWRiLWZlYmEtNGZhNS1iZjE3LTQwZTJiYTYxNGE5NS5qcGc.webp',
+        method: 'Билд',
+        glass: 'Рокс',
+        ice: '',
+        serving: 'Приготовить текилу со «Швепсом» в бокале рокс. Накрыть стакан салфетками, раскрутить его на столе, ударить им по каске и поставить обратно на стол. После того как гость выпьет напиток залпом, нанести несколько ударов битой по каске',
+        ingredients: [
+            { name: 'Текила ЛаПавеса', amount: '50', unit: 'мл' },
+            { name: 'Тоник "Рич"', amount: '100', unit: 'мл' }
         ]
     }
 ];
