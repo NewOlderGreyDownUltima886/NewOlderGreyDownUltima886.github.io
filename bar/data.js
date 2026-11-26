@@ -69,6 +69,22 @@ const menuData = [
             { name: 'Настойка Абсент Фрукошульц / Ксента / Оазиз', amount: '15', unit: 'мл' }
         ]
     },
+
+    {
+       id: 'who-are-you',
+        category: 'shots',
+        name: 'Вы кто такие? Я вас не звал!',
+        image: 'https://i.pinimg.com/736x/a5/55/9d/a5559d44953e3f7126d093d46febadcd.jpg',
+        method: 'Билд',
+        glass: 'Шот (45мл)',
+        ingredients: [
+            { name: 'Джин Баристер Бартендерс Эдишен Шып', amount: '15', unit: 'мл' },
+            { name: 'СуперДжусс', amount: '5', unit: 'мл' },
+            { name: 'Ликер Биттер Тундра', amount: '15', unit: 'мл' },
+            { name: 'Пюре-концентрат Винтаж "Дыня"', amount: '10', unit: 'мл' }
+        ]
+    },
+
     {
         id: 'popcorn',
         category: 'shots',
@@ -125,20 +141,6 @@ const menuData = [
     //         { name: 'Настойка Ирина Любовь', amount: '15', unit: 'мл' }
     //     ]
     // },
-    {
-        id: 'who-are-you',
-        category: 'shots',
-        name: 'Вы кто такие? Я вас не звал!',
-        image: 'https://i.pinimg.com/736x/a5/55/9d/a5559d44953e3f7126d093d46febadcd.jpg',
-        method: 'Билд',
-        glass: 'Шот (45мл)',
-        ingredients: [
-            { name: 'Джин Баристер Бартендерс Эдишен Шып', amount: '15', unit: 'мл' },
-            { name: 'СуперДжусс', amount: '5', unit: 'мл' },
-            { name: 'Ликер Биттер Тундра', amount: '15', unit: 'мл' },
-            { name: 'Пюре-концентрат Винтаж "Дыня"', amount: '10', unit: 'мл' }
-        ]
-    },
 
     // ================= ЧАЙ =================
     {
